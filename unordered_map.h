@@ -5,12 +5,15 @@
 #include "hand.h"
 class unordered_map
 {
+private:
+    int size;
+    //Hash Function
 public:
     //=== Constructor ===
     //=== Destructor ===
     //=== CopyConst + CopyAss ===
     //=== Accessors ===
-    //operator[]
+    Hand& operator[](const Hand& hand);
     const int size();
     //=== Insertion ===
     void insert(std::vector<Hand> hand);
