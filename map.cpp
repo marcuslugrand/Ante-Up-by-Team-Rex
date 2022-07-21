@@ -25,4 +25,5 @@ std::vector<Hand> map::find(const int &quality)
     for (auto iter = mapHand.find(&quality); iter != mapHand.end(&quality); iter++) {
         hand.push_back();
     }
+    return hand;
 }
