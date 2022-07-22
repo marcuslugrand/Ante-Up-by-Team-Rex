@@ -156,7 +156,7 @@ int main() {
     button4.setPosition(10, 200);
 
     bool displayCards = false;
-    unordered_set<pair<short, short>> selectedCards;
+    unordered_set<pair<short, short>, hash_pair> selectedCards;
     while (window.isOpen())
     {
         
@@ -194,14 +194,15 @@ int main() {
 
                     }
                     *///cards
-                    if (mousePosition.y > 100 && mousePosition.y < 500 &&mousePosition.x > 820 && mousePosition.x < 1720 ) {
-                        short suit = (mousePosition.y - 100) % 100;
-                        short rank = (mounsePosition.x - 820) % 75;
-                        if (selectedCards.find(make_pair(suit, rank)) == selectedCards.end()) {
-                            selectedCards.insert(make_pair(suit, rank));
-                        }
-                        else
-                            selectedCards.erase(make_pair(suit, rank));
+                     if (mousePosition.y > 100 && mousePosition.y < 500 && mousePosition.x > 820 && mousePosition.x < 1780) {
+                         short suit = (mousePosition.y - 100) / 100 + 1;
+                         short rank = (mousePosition.x - 820) / 75 + 1;
+                         if (selectedCards.find(make_pair(suit, rank)) == selectedCards.end()) {
+                             selectedCards.insert(make_pair(suit, rank));
+                         }
+                         else {
+                             selectedCards.erase(make_pair(suit, rank));
+                         }
                     }
                     
                 }
@@ -239,6 +240,7 @@ int main() {
             for (auto cards : selectedCards) {
                 select.setPosition(820 + 75 * (cards.second - 1), 100 * cards.first);
                 window.draw(select);
+                cout << 820 + 75 * (cards.second - 1) << " " << 100 * cards.first << endl;
             }
         }
         
