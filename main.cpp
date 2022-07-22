@@ -5,6 +5,7 @@
 #include "hand.h"
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 
 using namespace std;
 
@@ -155,9 +156,10 @@ int main() {
     button4.setPosition(10, 200);
 
     bool displayCards = false;
+    unordered_set<pair<short, short>> selectedCards;
     while (window.isOpen())
     {
-       
+        
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -191,11 +193,17 @@ int main() {
                     if (mousePosition.y < game.GetHeight() * 32 && game.state == 1) {
 
                     }
-                    //cards
-                    if (mousePosition.y < game.GetHeight() * 32 && game.state == 1) {
-
+                    *///cards
+                    if (mousePosition.y > 100 && mousePosition.y < 500 &&mousePosition.x > 820 && mousePosition.x < 1720 ) {
+                        short suit = (mousePosition.y - 100) % 100;
+                        short rank = (mounsePosition.x - 820) % 75;
+                        if (selectedCards.find(make_pair(suit, rank)) == selectedCards.end()) {
+                            selectedCards.insert(make_pair(suit, rank));
+                        }
+                        else
+                            selectedCards.erase(make_pair(suit, rank));
                     }
-                    */
+                    
                 }
             }
         }
@@ -226,6 +234,11 @@ int main() {
                     cardImages[make_pair(suit, rank)].setPosition(820 + 75 * (rank - 1), 100 * suit);
                     window.draw(cardImages[make_pair(suit, rank)]);
                 }
+            }
+
+            for (auto cards : selectedCards) {
+                select.setPosition(820 + 75 * (cards.second - 1), 100 * cards.first);
+                window.draw(select);
             }
         }
         
