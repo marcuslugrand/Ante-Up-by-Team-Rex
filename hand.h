@@ -5,6 +5,7 @@ struct Card {
 	int rank;
 	Card(int suit, int rank);
     bool cardCompare(Card& a);
+    bool cardCompare(Card& a) const;
 };
 
 struct Hand {
@@ -12,6 +13,7 @@ struct Hand {
 	int qualty;
 	Hand(std::vector<Card> &cards, int qualty);
     bool handCompare(Hand& a);
+    bool handCompare(Hand& a) const;
 };
 
 Hand::Hand(std::vector<Card> &cards, int qualty) {
@@ -31,7 +33,23 @@ bool Card::cardCompare(Card& a)
     return true;
 }
 
+bool Card::cardCompare(Card& a) const
+{
+    if(this->suit != a.suit || this->rank != a.rank)
+        return false;
+    return true;
+}
+
 bool Hand::handCompare(Hand& a)
+{
+    for(int i = 0; i < 5; ++i)
+    {
+        if(!this->cards.at(i).cardCompare(a.cards.at(i)))
+            return false;
+    }
+    return true;
+}
+bool Hand::handCompare(Hand& a) const
 {
     for(int i = 0; i < 5; ++i)
     {
