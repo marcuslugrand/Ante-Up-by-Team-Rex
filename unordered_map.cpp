@@ -10,8 +10,8 @@ const size_t unordered_map::hash(const Hand& hand)
     //Hash: ((suite - 1) * 13 + rank) * 53^i
     for(int i = 0; i < hand.cards.size(); ++i)
     {
-        Card& card = hand.cards.at(i);
-        hash += size_t(((card.suite - 1) * 13 + card.rank) * pow(53.0f, (hand.cards.size() - i)));
+        Card card = hand.cards.at(i);
+        hash += size_t(((card.suit - 1) * 13 + card.rank) * pow(53.0f, (hand.cards.size() - i)));
     }
     return hash;
 }
@@ -21,7 +21,7 @@ const size_t unordered_map::reduce(const size_t hash)
     return hash % handToQual.size();
 }
 //Collision resolution
-size_t unordered_map::collisionResolution(size_t index, Hand &hand)
+size_t unordered_map::collisionResolution(size_t index, const Hand &hand)
 {
     //Probe map
     //else if map[index] is not empty: continue probing until it is empty
@@ -30,7 +30,7 @@ size_t unordered_map::collisionResolution(size_t index, Hand &hand)
     while(!handToQual.at(index).first.empty())
     {
         //Compute next probe value
-        index = pow(c, i, index);
+        index = probe(c, i, index);
 
         //Increment exponent and base
         ++i;
@@ -43,7 +43,7 @@ size_t unordered_map::probe(const int c, const int i, const size_t index)
     int p = pow(c, i);
 
     //Roll over index if it overflows
-    if((index + probe) >= qualToHand.capacity())
+    if((index + p) >= qualToHand.capacity())
     {
         return reduce((index + p));
     }
@@ -56,7 +56,7 @@ size_t unordered_map::probe(const int c, const int i, const size_t index)
 void unordered_map::rehash()
 {
     //copy all elements from handToQual to a temp vector
-    std::vector<std::pair<std::vector<Card>>, int> tempList;
+    std::vector<std::pair<std::vector<Card>, int>> tempList;
     for(auto& keyVal : handToQual)
     {
         if(!keyVal.first.empty())
@@ -73,7 +73,8 @@ void unordered_map::rehash()
     //Re-insert all key : val
     for(auto& keyVal : tempList)
     {
-        insert(keyVal);
+        Hand h(keyVal.first, keyVal.second);
+        insert(h);
     }
 
 }
@@ -88,10 +89,10 @@ unordered_map::unordered_map()
   qualToHand(10)    //# of possible hand qualities
 {}
 //=== Accessors ===
-Hand& unordered_map::operator[](const Hand &hand)
+int unordered_map::operator[](const Hand &hand)
 {
     //1. Find
-    //2. return ref
+    return find(hand);
 }
 const int unordered_map::size()
 {
@@ -101,11 +102,11 @@ const int unordered_map::size()
 bool unordered_map::insert(const Hand& hand)
 {
     //1. Hash: Get unique hash ID, reduce to get index
-    size_t hash = hash(hand);
-    size_t index = reduce(hash);
+    size_t h = hash(hand);
+    size_t index = reduce(h);
 
     //2. Collision resolution policy
-    if(find.(hand) > -1)
+    if(find(hand) > -1)
     {
         return false;
     }
@@ -117,7 +118,7 @@ bool unordered_map::insert(const Hand& hand)
     }
 
     //3. Insert
-    handToQual.insert(index, std::make_pair(hand.cards, hand.qualty));
+    handToQual.insert((handToQual.begin() + index), std::make_pair(hand.cards, hand.qualty));
 
     //Update size and load factor
     ++numEntries;
@@ -138,26 +139,17 @@ bool unordered_map::insert(const Hand& hand)
 const int unordered_map::find(const Hand& hand)
 {
     //1. Hash: Get unique hash ID, reduce to get index
-    size_t hash = hash(hand);
-    size_t index = reduce(hash);
+    size_t h = hash(hand);
+    size_t index = reduce(h);
 
     //2. Affirm found / probe until found
     int i = 0;
     int c = 1;
     while(!handToQual.at(index).first.empty())
     {
-        //if whatever is present at the index == hand: return quality
-        //for(int i = 0; i < hand.cards.size(); ++i)
-        //{
-            //Card& card1 = hand.cards.at(i);
-            //Card& card2 = handToQual.at(index).first.at(i);
-            //if(!card1.cardCompare(card2))
-                //probe
-                //break
-        //}
-
         //If hands are equal: return quality
-        if(hand->handCompare(handToQual.at(index).first))
+        Hand hand2(handToQual.at(index).first, handToQual.at(index).second);
+        if(hand.handCompare(hand2))
         {
             return hand.qualty;
         }

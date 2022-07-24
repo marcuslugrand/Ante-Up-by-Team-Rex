@@ -8,7 +8,7 @@
 class unordered_map
 {
 private:
-    static const double MAX_LOAD_FACTOR = 0.5f;
+    static constexpr double MAX_LOAD_FACTOR = 0.5f;
     int numEntries;
     double loadFactor;
 
@@ -23,11 +23,11 @@ private:
     const size_t reduce(const size_t hash);
 
     //Collision Resolution
-    size_t collisionResolution(size_t index, Hand& hand);
+    size_t collisionResolution(size_t index, const Hand& hand);
     size_t probe(const int c, const int i, const size_t index);
 
     //Load Factor Re-balancing
-    void rehash()
+    void rehash();
 
 public:
     //=== Constructor ===
@@ -35,7 +35,7 @@ public:
     //=== Destructor ===
     //=== CopyConst + CopyAss ===
     //=== Accessors ===
-    Hand& operator[](const Hand& hand);
+    int operator[](const Hand& hand);
     const int size();
 
     //=== Insertion ===
@@ -43,6 +43,6 @@ public:
 
     //=== Search ===
     const int find(const Hand& hand);
-    std::vector<Hand&> find(const int quality);
+    std::vector<Hand> find(const int quality);
 };
 #endif //PROJECT3_UNORDERED_MAP_H
