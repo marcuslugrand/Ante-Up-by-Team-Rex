@@ -8,7 +8,7 @@ class unordered_map
 {
 private:
     static const double MAX_LOAD_FACTOR = 0.5f;
-    int size;
+    int numEntries;
     double loadFactor;
 
     //Map Container Implementation
@@ -16,7 +16,13 @@ private:
     std::vector<std::vector<Hand>> qualToHand;
 
     //Hash Function
+    const size_t hash(const Hand& hand);
+
+    //Reduction function
+    const size_t reduce(const size_t& hash);
+
     //Collision Resolution
+
     //Load Factor Re-balancing
 
 public:
@@ -29,10 +35,10 @@ public:
     const int size();
 
     //=== Insertion ===
-    bool insert(std::vector<Hand>& hand);
+    bool insert(const Hand& hand);
 
     //=== Search ===
-    const int find(std::vector<Hand> hand);
-    std::vector<Hand> find(const int& quality);
+    const int find(const Hand& hand);
+    std::vector<Hand&> find(const int& quality);
 };
 #endif //PROJECT3_UNORDERED_MAP_H
