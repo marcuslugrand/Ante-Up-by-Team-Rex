@@ -1,4 +1,10 @@
 #include "unordered_map.h"
+//=== Static variables ===
+//=== Constructor ===
+unordered_map::unordered_map()
+: size = 0,
+  loadFactor = 0.0f;
+{}
 //=== Accessors ===
 Hand& unordered_map::operator[](const Hand &hand)
 {
@@ -10,7 +16,7 @@ const int unordered_map::size()
     return size;
 }
 //=== Insertion ===
-void unordered_map::insert(std::vector <Hand> hand)
+bool unordered_map::insert(std::vector <Hand>& hand)
 {
     //1. Hash
     //2. Collision resolution policy
