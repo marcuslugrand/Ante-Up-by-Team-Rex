@@ -7,7 +7,7 @@
 class unordered_hand_map
 {
 private:
-    static constexpr double MAX_LOAD_FACTOR = 0.5f;
+    static constexpr double MAX_LOAD_FACTOR = 0.75f;
     int numEntries;
     double loadFactor;
 
