@@ -8,9 +8,9 @@ private:
     void balance(map* node);
     
     //iterate through keys
-    map* iterator(std::vector<Hand> first);
+    map* iterator(std::vector<Card> first);
 
-    const map* iterator(std::vector<Hand> first) const;
+    const map* iterator(std::vector<Card> first) const;
 
     void leftRot(map* a);
 
@@ -20,27 +20,27 @@ private:
     void rotator(map* node);
 
     // Function to insert a value in map
-    map* insert(std::vector<Hand>& hand);
+    map* insertMap(std::vector<Card> first);
 
     // depth at node
     int depthofTree(map* node);
 
     // Inititialize map variables
-    map* create(std::vector<Hand> first);
+    map* create(std::vector<Card> first);
 
 public:
     static class map* root;
-    static int size;
+    int count;
 
     map* left;
     map* right;
     map* parent;
-    std::vector<Hand> first;
+    std::vector<Card> first;
     int second;
     int depth;
 
     //store hands together by quality
-    std::vector<std::vector<Hand>> qualToHand;
+    std::vector<std::vector<Card>> qualtoHand;
 
     // CHange value of key
     /*void changeKey(vector<Hand> first, int second)
@@ -73,11 +73,11 @@ public:
     int size(void);
 
     // Insert key and value
-    void insert(Hand& hand);
+    void insert(Hand hand);
     const int find(const Hand& hand);
 
     std::vector<Hand> find(const int quality);
 };
 
 map* map::root = nullptr;
-int map::size = 0;
+//int map::size = 0;
