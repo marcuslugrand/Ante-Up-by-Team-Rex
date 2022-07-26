@@ -61,8 +61,8 @@ int main() {
     unordered_hand_map hashMap;
 
     //import data
-    importFile("poker-hand-training-true.data", hashMap);
-    importFile("poker-hand-testing.data", hashMap);
+    //importFile("poker-hand-training-true.data", hashMap);
+    //importFile("poker-hand-testing.data", hashMap);
     
     sf::RenderWindow window(sf::VideoMode(1800, 800), "Ante Up");
     
@@ -133,6 +133,7 @@ int main() {
     }
     
     //Selection
+    unordered_set<pair<short, short>, hash_pair> selectedCards;
     sf::RectangleShape select(sf::Vector2f(73, 98));
     select.setFillColor(sf::Color::Transparent);
     select.setOutlineColor(sf::Color::Green);
@@ -144,7 +145,7 @@ int main() {
 
     //Options
     sf::RectangleShape button1(sf::Vector2f(20, 20));
-    button1.setFillColor(sf::Color::Transparent);
+    button1.setFillColor(sf::Color::White);
     button1.setOutlineColor(sf::Color::White);
     button1.setOutlineThickness(1);
     button1.setPosition(10, 50);
@@ -174,10 +175,25 @@ int main() {
     runText.setFillColor(sf::Color::Black);
     runText.setPosition(270,730);
 
+    //Option2 text input
+    string qualityInput;
+    sf::Text qualityText("",font);
+    qualityText.setPosition(1240, 355);
+    //qualityText.setFillColor(sf::Color::White);
+    sf::RectangleShape textbox(sf::Vector2f(100, 50));
+    textbox.setFillColor(sf::Color::Transparent);
+    textbox.setOutlineColor(sf::Color::White);
+    textbox.setOutlineThickness(1);
+    textbox.setPosition(1200, 350);
 
-    bool displayCards = false;
-    unordered_set<pair<short, short>, hash_pair> selectedCards;
+    //History Table
     queue<Record> history;
+    sf::Text dataStruct("", font);
+    sf::Text runTime("", font);
+    sf::Text optionType("", font);
+
+    bool displayCards = true;
+   
     while (window.isOpen())
     {
         
@@ -205,6 +221,7 @@ int main() {
                         button2.setFillColor(sf::Color::White);
                         button3.setFillColor(sf::Color::Transparent);
                         button4.setFillColor(sf::Color::Transparent);
+                        displayCards = false;
                     }
                      /*//option 3
                     if (mousePosition.y < game.GetHeight() * 32 && game.state == 1) {
@@ -237,9 +254,24 @@ int main() {
 
                              }
                          }
+                         if (button2.getFillColor() == sf::Color::White) {
+                             if (selectedCards.size() == 5) {
+
+                                 //history.push();
+                             }
+                             else {
+
+                             }
+                         }
                      }
                     
                 }
+            }
+
+            if (event.type == sf::Event::TextEntered)
+            {
+                qualityInput = event.text.unicode;
+                qualityText.setString(qualityInput);
             }
         }
 
@@ -290,7 +322,25 @@ int main() {
             numSelect.setString(slectionSize+ slash + five);
             window.draw(numSelect);
         }
-        
+        else {
+            window.draw(textbox);
+            window.draw(qualityText);
+        }
+        queue<Record> temp(history);
+        for (int i = 0; i < temp.size(); i++) {
+            dataStruct.setString(temp.front().dataStruct);
+            optionType.setString(temp.front().option);
+            runTime.setString(to_string(temp.front().runTime));
+
+            dataStruct.setPosition(530,70 + 10*i);
+            optionType.setPosition(400,70 + 10*i);
+            runTime.setPosition(670, 70 + 10*i);
+
+            window.draw(dataStruct);
+            window.draw(optionType);
+            window.draw(runTime);
+        }
+
         window.display();
     }
 

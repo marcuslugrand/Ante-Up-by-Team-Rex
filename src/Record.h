@@ -3,7 +3,7 @@
 using namespace std;
 struct Record {
 	int runTime;
-	int option;
+	string option;
 	string dataStruct;
 	Record(int option, string dataStruct, int runTime);
 };
