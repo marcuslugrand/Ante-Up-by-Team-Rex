@@ -125,7 +125,7 @@ bool unordered_map::insert(const Hand& hand)
     loadFactor = double(numEntries) / double(handToQual.capacity());
 
     //4. Check load factor, rebalance/rehash if necessary
-    if(loadFactor > 0.5f)
+    if(loadFactor > MAX_LOAD_FACTOR)
     {
         rehash();
     }
