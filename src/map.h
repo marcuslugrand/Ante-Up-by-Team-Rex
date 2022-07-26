@@ -1,19 +1,83 @@
 #include <vector>
-#include <map>
 #include "hand.h"
 
 class map{
 
 private:
-	
-	int size:
-	std::map<std::vector<Hand>, int> mapHand;
+    // Balance the tree
+    void balance(map* node);
+    
+    //iterate through keys
+    map* iterator(std::vector<Hand> first);
+
+    const map* iterator(std::vector<Hand> first) const;
+
+    void leftRot(map* a);
+
+    void rightRot(map* x);
+
+    // Rotate through tree
+    void rotator(map* node);
+
+    // Function to insert a value in map
+    map* insert(std::vector<Hand>& hand);
+
+    // depth at node
+    int depthofTree(map* node);
+
+    // Inititialize map variables
+    map* create(std::vector<Hand> first);
 
 public:
+    static class map* root;
+    static int size;
 
-	void insert(std::vector<Hand> hand);
-	
-	std::vector<Card> find(std::vector<Hand> hand);
-	const int find(const int &quality);
-	
+    map* left;
+    map* right;
+    map* parent;
+    std::vector<Hand> first;
+    int second;
+    int depth;
+
+    //store hands together by quality
+    std::vector<std::vector<Hand>> qualToHand;
+
+    // CHange value of key
+    /*void changeKey(vector<Hand> first, int second)
+    {
+        map* temp = iterator(first);
+        if (temp != nullptr) {
+            temp->second = second;
+        }
+    }*/
+
+    // Iterate through tree in order
+    /*void iterforQual(map* head, int quality)
+    {
+        if (root == nullptr) {
+        return;
+        }
+        if (head->second == quality) {
+            qualtoHand.push_back(first);
+        }
+        if (head->left != nullptr) {
+            iterforQual(head->left);
+        }
+        if (head->right != nullptr) {
+            iterforQual(head->right);
+        }
+        
+    }*/
+
+    // Returns number of elements in the map
+    int size(void);
+
+    // Insert key and value
+    void insert(Hand& hand);
+    const int find(const Hand& hand);
+
+    std::vector<Hand> find(const int quality);
 };
+
+map* map::root = nullptr;
+int map::size = 0;
