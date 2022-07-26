@@ -1,11 +1,10 @@
-#ifndef PROJECT3_UNORDERED_MAP_H
-#define PROJECT3_UNORDERED_MAP_H
+#pragma once
 
 #include <vector>
 #include <utility>
 #include <cmath>
 #include "hand.h"
-class unordered_map
+class unordered_hand_map
 {
 private:
     static constexpr double MAX_LOAD_FACTOR = 0.5f;
@@ -31,7 +30,7 @@ private:
 
 public:
     //=== Constructor ===
-    unordered_map();
+    unordered_hand_map();
 
     //=== Accessors ===
     int operator[](const Hand& hand);
@@ -44,4 +43,3 @@ public:
     const int find(const Hand& hand);
     std::vector<Hand> find(const int quality);
 };
-#endif //PROJECT3_UNORDERED_MAP_H

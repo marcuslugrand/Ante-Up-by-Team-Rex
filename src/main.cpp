@@ -2,14 +2,18 @@
 #include <fstream> 
 #include <SFML/Graphics.hpp>
 #include <string>
-#include "hand.h"
+//#include "hand.h"
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <queue>
+#include "Record.h"
+//#include "map.h"
+#include "unordered_hand_map.h"
 
 using namespace std;
 
-void importFile(string file) {
+void importFile(string file, unordered_hand_map hashMap) {
     ifstream data(file);
     if (data.is_open()) {
         while (!data.eof()) {
@@ -21,17 +25,17 @@ void importFile(string file) {
 
                 string rank;
                 getline(data, rank, ',');
-                //cout << suit << " " << rank << " | ";
+                cout << suit << " " << rank << " | ";
                 Card card = Card(stoi(suit), stoi(rank));
                 cards.push_back(card);
             }
             string quality;
             getline(data, quality);
-            //cout << quality << endl;
+            cout << quality << endl;
 
             Hand hand = Hand(cards, stoi(quality));
-            //unordered_map.insert(hand);
-            //map.insert(hand);
+            hashMap.insert(hand);
+           // map.insert(hand);
         }
     }
 }
@@ -54,10 +58,11 @@ struct hash_pair {
 };
 
 int main() { 
-    
+    unordered_hand_map hashMap;
+
     //import data
-    //importFile("poker-hand-training-true.data");
-    //importFile("poker-hand-testing.data");
+    importFile("poker-hand-training-true.data", hashMap);
+    importFile("poker-hand-testing.data", hashMap);
     
     sf::RenderWindow window(sf::VideoMode(1800, 800), "Ante Up");
     
@@ -132,6 +137,10 @@ int main() {
     select.setFillColor(sf::Color::Transparent);
     select.setOutlineColor(sf::Color::Green);
     select.setOutlineThickness(2);
+    //Selection Quantitiy
+    sf::Text numSelect("", font);
+    numSelect.setPosition(1250,500);
+    numSelect.setCharacterSize(50);
 
     //Options
     sf::RectangleShape button1(sf::Vector2f(20, 20));
@@ -155,8 +164,20 @@ int main() {
     button4.setOutlineThickness(1);
     button4.setPosition(10, 200);
 
+    //Run
+    sf::RectangleShape runButton(sf::Vector2f(100, 50));
+    runButton.setFillColor(sf::Color::White);
+    runButton.setOutlineColor(sf::Color::White);
+    runButton.setOutlineThickness(1);
+    runButton.setPosition(250, 725);
+    sf::Text runText("Run", font);
+    runText.setFillColor(sf::Color::Black);
+    runText.setPosition(270,730);
+
+
     bool displayCards = false;
     unordered_set<pair<short, short>, hash_pair> selectedCards;
+    queue<Record> history;
     while (window.isOpen())
     {
         
@@ -203,7 +224,20 @@ int main() {
                          else {
                              selectedCards.erase(make_pair(suit, rank));
                          }
-                    }
+                     }
+
+                     //Run
+                     if (mousePosition.y < 775 && mousePosition.y > 725 && mousePosition.x < 350 && mousePosition.x > 250) {
+                         if (button1.getFillColor() == sf::Color::White) {
+                             if (selectedCards.size() == 5) {
+                                 
+                                 //history.push();
+                             }
+                             else {
+
+                             }
+                         }
+                     }
                     
                 }
             }
@@ -227,6 +261,8 @@ int main() {
         window.draw(option1);
         window.draw(option2);
         window.draw(option);
+        window.draw(runButton);
+        window.draw(runText);
 
         //draw dynamic elements
         if(displayCards){
@@ -240,8 +276,19 @@ int main() {
             for (auto cards : selectedCards) {
                 select.setPosition(820 + 75 * (cards.second - 1), 100 * cards.first);
                 window.draw(select);
-                cout << 820 + 75 * (cards.second - 1) << " " << 100 * cards.first << endl;
+                //cout << 820 + 75 * (cards.second - 1) << " " << 100 * cards.first << endl;
             }
+            
+            string slash = "/";
+            string slectionSize = to_string(selectedCards.size());
+            string five = "5";
+            if (selectedCards.size() != 5)
+                numSelect.setFillColor(sf::Color::Red);
+            else
+                numSelect.setFillColor(sf::Color::Green);
+
+            numSelect.setString(slectionSize+ slash + five);
+            window.draw(numSelect);
         }
         
         window.display();

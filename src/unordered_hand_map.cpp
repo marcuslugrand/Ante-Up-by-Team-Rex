@@ -1,11 +1,11 @@
-#include "unordered_map.h"
+#include "unordered_hand_map.h"
 /*
  * Private member functions
  */
 //Hash function
-const size_t unordered_map::hash(const Hand& hand)
+const size_t unordered_hand_map::hash(const Hand& hand)
 {
-    size_t hash;
+    size_t hash = 0;
 
     //Hash: ((suite - 1) * 13 + rank) * 53^i
     for(int i = 0; i < hand.cards.size(); ++i)
@@ -16,12 +16,12 @@ const size_t unordered_map::hash(const Hand& hand)
     return hash;
 }
 //Reduction
-const size_t unordered_map::reduce(const size_t hash)
+const size_t unordered_hand_map::reduce(const size_t hash)
 {
     return hash % handToQual.size();
 }
 //Collision resolution
-size_t unordered_map::collisionResolution(size_t index, const Hand &hand)
+size_t unordered_hand_map::collisionResolution(size_t index, const Hand &hand)
 {
     //Probe map
     //else if map[index] is not empty: continue probing until it is empty
@@ -38,7 +38,7 @@ size_t unordered_map::collisionResolution(size_t index, const Hand &hand)
     }
     return index;
 }
-size_t unordered_map::probe(const int c, const int i, const size_t index)
+size_t unordered_hand_map::probe(const int c, const int i, const size_t index)
 {
     int p = pow(c, i);
 
@@ -53,7 +53,7 @@ size_t unordered_map::probe(const int c, const int i, const size_t index)
     }
 }
 //Re-hash
-void unordered_map::rehash()
+void unordered_hand_map::rehash()
 {
     //copy all elements from handToQual to a temp vector
     std::vector<std::pair<std::vector<Card>, int>> tempList;
@@ -82,24 +82,24 @@ void unordered_map::rehash()
  * Public member functions
  */
 //=== Constructor ===
-unordered_map::unordered_map()
+unordered_hand_map::unordered_hand_map()
 : numEntries(0),
   loadFactor(0.0f),
   handToQual(997),  //Closest prime to 1000
   qualToHand(10)    //# of possible hand qualities
 {}
 //=== Accessors ===
-int unordered_map::operator[](const Hand &hand)
+int unordered_hand_map::operator[](const Hand &hand)
 {
     //1. Find
     return find(hand);
 }
-const int unordered_map::size()
+const int unordered_hand_map::size()
 {
     return numEntries;
 }
 //=== Insertion ===
-bool unordered_map::insert(const Hand& hand)
+bool unordered_hand_map::insert(const Hand& hand)
 {
     //1. Hash: Get unique hash ID, reduce to get index
     size_t h = hash(hand);
@@ -136,7 +136,7 @@ bool unordered_map::insert(const Hand& hand)
     return true;
 }
 //=== Search ===
-const int unordered_map::find(const Hand& hand)
+const int unordered_hand_map::find(const Hand& hand)
 {
     //1. Hash: Get unique hash ID, reduce to get index
     size_t h = hash(hand);
@@ -165,7 +165,7 @@ const int unordered_map::find(const Hand& hand)
     }
     return -1;
 }
-std::vector<Hand> unordered_map::find(const int quality)
+std::vector<Hand> unordered_hand_map::find(const int quality)
 {
     //1. find all hands of quality
     return qualToHand.at(quality);
