@@ -56,12 +56,12 @@ size_t unordered_hand_map::probe(const int c, const int i, const size_t index)
 void unordered_hand_map::rehash()
 {
     //copy all elements from handToQual to a temp vector
-    std::vector<std::pair<std::vector<Card>, int>> tempList;
+    /*std::vector<std::pair<std::vector<Card>, int>> tempList;
     for(auto& keyVal : handToQual)
     {
         if(!keyVal.first.empty())
             tempList.push_back(keyVal);
-    }
+    }*/
 
     //Get new size
     size_t newSize = handToQual.capacity() * 2;
@@ -71,10 +71,13 @@ void unordered_hand_map::rehash()
     handToQual.resize(newSize);
 
     //Re-insert all key : val
-    for(auto& keyVal : tempList)
+    for(int i = 0; i < qualToHand.size(); ++i)
     {
-        Hand h(keyVal.first, keyVal.second);
-        insert(h);
+        for(auto& hand : qualToHand.at(i))
+        {
+            //Hand h(hand.cards, hand.qualty);
+            insert(hand);
+        }
     }
 
 }

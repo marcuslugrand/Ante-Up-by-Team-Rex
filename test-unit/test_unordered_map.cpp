@@ -1,6 +1,7 @@
-#include "../src/unordered_map.cpp"
+#include "../src/unordered_hand_map.cpp"
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
+#include <unordered_map>
 
 /*
 	To check output (At the find_the digits directory):
@@ -11,7 +12,9 @@
  */
 TEST_CASE("Function: insert", "[insert1]")
 {
-    unordered_map um;
+    unordered_hand_map um;
+    //std::unordered_map<int, int>
+    std::unordered_map<int, int>::iterator it;
 
     std::vector<Card> cardlist;
     for(int i = 0; i < 5; ++i)
