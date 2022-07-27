@@ -1,227 +1,101 @@
-#include "map.h"
-#include <iterator>
-#include <string>
+#include <vector>
+#include <iostream>
+#include "hand.h"
 
+class map {
 
-void map::balance(map* node)
-{
-    while (node != root) {
-        int d = node->depth;
-        node = node->parent;
-        if (node->depth < d + 1) {
-            node->depth = d + 1;
+private:
+    // Balance the tree
+    void balance(map* node);
+
+    //iterate through keys
+    map* iterator(std::vector<Card>& first);
+
+    const map* iterator(std::vector<Card>& first) const;
+
+    void leftRot(map* a);
+
+    void rightRot(map* x);
+
+    // Rotate through tree
+    void rotator(map* node);
+
+    // Function to insert a value in map
+    map* insertMap(std::vector<Card> first);
+
+    // depth at node
+    int depthofTree(map* node);
+
+    // Inititialize map variables
+    map* create(std::vector<Card> first);
+
+    const int search(std::vector<Card> _first) const
+    {
+        const map* temp = iterator(_first);
+        if (temp != nullptr) {
+            return temp->second;
         }
-        if (node == root && depthofTree(node->left) - depthofTree(node->right) > 1) {
-            if (depthofTree(node->left->left) > depthofTree(node->left->right)) {
-                root = node->left;
-            }
-            else {
-                root = node->left->right;
-            }
-            rotator(node);
-            break;
-        }
-        else if (node == root && depthofTree(node->left) - depthofTree(node->right) < -1) {
-            if (depthofTree(node->right->right) > depthofTree(node->right->left)) {
-                root = node->right;
-            }
-            else {
-                root = node->right->left;
-            }
-            rotator(node);
-            break;
-        }
-        rotator(node);
-    }
-}
-
-map* map::iterator(std::vector<Card>& first)
-{
-    map* tmp = root;
-    while (tmp != nullptr && tmp->_first != first) {
-        if (first < tmp->_first) {
-            tmp = tmp->left;
-        }
-        else {
-            tmp = tmp->right;
-        }
-    }
-    return tmp;
-}
-
-const map* map::iterator(std::vector<Card>& first) const
-{
-    map* tmp = root;
-    while (tmp != nullptr && tmp->_first != first) {
-        if (first < tmp->_first) {
-            tmp = tmp->left;
-        }
-        else {
-            tmp = tmp->right;
-        }
-    }
-    return tmp;
-}
-
-void map::leftRot(map* a)
-{
-    map* b = a->right;
-    a->right = b->left;
-
-    if (b->left != nullptr) {
-        b->left->parent = a;
-    }
-    if (a->parent != nullptr && a->parent->left == a) {
-        a->parent->left = b;
-    }
-    else if (a->parent != nullptr && a->parent->right == a) {
-        a->parent->right = b;
-    }
-
-    b->parent = a->parent;
-    b->left = a;
-    a->parent = b;
-}
-
-void map::rightRot(map* x)
-{
-    map* y = x->left;
-    x->left = y->right;
-
-    if (y->right != nullptr) {
-        y->right->parent = x;
-    }
-    if (x->parent != nullptr && x->parent->right == x) {
-        x->parent->right = y;
-    }
-    else if (x->parent != nullptr && x->parent->left == x) {
-        x->parent->left = y;
-    }
-
-    y->parent = x->parent;
-    y->right = x;
-    x->parent = y;
-}
-
-void map::rotator(map* node) {
-    if (depthofTree(node->left)
-        - depthofTree(node->right) > 1) {
-        if (depthofTree(node->left->left) > depthofTree(node->left->right)) {
-            node->depth = std::max(depthofTree(node->right) + 1, depthofTree(node->left->right) + 1);
-            node->left->depth = std::max(depthofTree(node->left->left) + 1, depthofTree(node) + 1);
-            rightRot(node);
-        }
-        else {
-            node->left->depth = std::max(depthofTree(node->left->left) + 1, depthofTree(node->left->right->left) + 1);
-            node->depth = std::max(depthofTree(node->right) + 1, depthofTree(node->left->right->right) + 1);
-            node->left->right->depth = std::max(depthofTree(node) + 1, depthofTree(node->left) + 1);
-            leftRot(node->left);
-            rightRot(node);
-        }
-    }
-    else if (depthofTree(node->left) - depthofTree(node->right) < -1) {
-        if (depthofTree(node->right->right) > depthofTree(node->right->left)) {
-            node->depth = std::max(depthofTree(node->left) + 1, depthofTree(node->right->left) + 1);
-            node->right->depth = std::max(depthofTree(node->right->right) + 1, depthofTree(node) + 1);
-            leftRot(node);
-        }
-        else {
-            node->right->depth = std::max(depthofTree(node->right->right) + 1, depthofTree(node->right->left->right) + 1);
-            node->depth = std::max(depthofTree(node->left) + 1, depthofTree(node->right->left->left) + 1);
-            node->right->left->depth = std::max(depthofTree(node) + 1, depthofTree(node->right) + 1);
-            rightRot(node->right);
-            leftRot(node);
-        }
-    }
-}
-
-map* map::insertMap(std::vector<Card> first)
-{
-    count++;
-    map* newNode = create(first);
-    if (root == nullptr) {
-        root = newNode;
-        return root;
-    }
-    map* temp = root;
-    map* prev = nullptr;
-    while (temp != nullptr) {
-        prev = temp;
-
-        if (first < temp->_first) {
-            temp = temp->left;
-        }
-        else if (first > temp->_first) {
-            temp = temp->right;
-        }
-        else {
-            free(newNode);
-            count--;
-            return temp;
-        }
-    }
-    if (first < prev->_first) {
-        prev->left = newNode;
-    }
-    else {
-        prev->right = newNode;
-    }
-    newNode->parent = prev;
-    balance(newNode);
-    return newNode;
-}
-
-int map::depthofTree(map* node)
-{
-    if (node == nullptr) {
-
-        // If it is null node
         return 0;
     }
-    return node->depth;
-}
 
-map* map::create(std::vector<Card> first)
-{
-    map* newnode = (map*)malloc(sizeof(map));
-    newnode->_first = first;
-    newnode->second = 0;
-    newnode->left = nullptr;
-    newnode->right = nullptr;
-    newnode->parent = nullptr;
-    newnode->depth = 1;
-    return newnode;
-}
+public:
+    //static class map* root;
+    int count = 0;
+    map* root = nullptr;
+    map* left = nullptr;
+    map* right = nullptr;
+    map* parent = nullptr;
+    std::vector<Card> _first;
+    int second = 0;
+    int depth = 0;
 
-int map::size(void) {
-    return count;
-}
-
-void map::insert(Hand hand)
-{
-    _first = hand.cards;
-    second = hand.qualty;
-
-    map* temp = iterator(_first);
-    if (temp == nullptr) {
-        insertMap(_first)->second = hand.qualty;
+    int operator[](std::vector<Card> key) {
+        return insertMap(key)->second;
     }
-    else {
-        temp->second = second;
+
+    const int operator[](std::vector<Card> key) const
+    {
+        // Search method is also qualified with const
+        return search(key);
     }
-    qualtoHand.at(second).push_back(hand);
+    //store hands together by quality
+    std::vector<std::vector<Hand>> qualtoHand;
 
-}
+    // CHange value of key
+    /*void changeKey(vector<Hand> first, int second)
+    {
+        map* temp = iterator(first);
+        if (temp != nullptr) {
+            temp->second = second;
+        }
+    }*/
 
-const int map::find(const Hand& hand) {
-    _first = hand.cards;
-    int qual = iterator(_first)->second;
-    return qual;
-}
+    // Iterate through tree in order
+    /*void iterforQual(map* head, int quality)
+    {
+        if (root == nullptr) {
+        return;
+        }
+        if (head->second == quality) {
+            qualtoHand.push_back(first);
+        }
+        if (head->left != nullptr) {
+            iterforQual(head->left);
+        }
+        if (head->right != nullptr) {
+            iterforQual(head->right);
+        }
+    }*/
 
-std::vector<Hand> map::find(const int qualty) {
-    //map* head = root;
-    //iterforQual(head, qualty);
-    int qTemp = qualty;
-    return qualtoHand.at(qTemp);
-}
+    // Returns number of elements in the map
+    int size(void);
+
+    // Insert key and value
+    void insert(Hand hand);
+    const int find(const Hand& hand);
+
+    std::vector<Hand> find(const int quality);
+};
+
+//map* map::root = nullptr;
+//int map::size = 0;
