@@ -208,8 +208,7 @@ void map::insert(Hand hand)
     else {
         temp->second = second;
     }
-
-    qualtoHand.at(second).push_back(first);
+    qualtoHand.at(second).push_back(hand);
 
 }
 
