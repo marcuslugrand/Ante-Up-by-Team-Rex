@@ -8,12 +8,12 @@
 #include <unordered_set>
 #include <queue>
 #include "Record.h"
-//#include "map.h"
+#include "hand_map.h"
 #include "unordered_hand_map.h"
 
 using namespace std;
 
-void importFile(string file, unordered_hand_map hashMap) {
+void importFile(string file, unordered_hand_map hashMap, hand_map treeMap ) {
     ifstream data(file);
     if (data.is_open()) {
         while (!data.eof()) {
@@ -25,17 +25,17 @@ void importFile(string file, unordered_hand_map hashMap) {
 
                 string rank;
                 getline(data, rank, ',');
-                cout << suit << " " << rank << " | ";
+               // cout << suit << " " << rank << " | ";
                 Card card = Card(stoi(suit), stoi(rank));
                 cards.push_back(card);
             }
             string quality;
             getline(data, quality);
-            cout << quality << endl;
+           // cout << quality << endl;
 
             Hand hand = Hand(cards, stoi(quality));
             hashMap.insert(hand);
-           // map.insert(hand);
+            treeMap.insert(hand);
         }
     }
 }
@@ -59,9 +59,10 @@ struct hash_pair {
 
 int main() { 
     unordered_hand_map hashMap;
+    hand_map treeMap;
 
     //import data
-    //importFile("poker-hand-training-true.data", hashMap);
+    importFile("test1.data", hashMap, treeMap);
     //importFile("poker-hand-testing.data", hashMap);
     
     sf::RenderWindow window(sf::VideoMode(1800, 800), "Ante Up");
@@ -248,6 +249,7 @@ int main() {
                          if (button1.getFillColor() == sf::Color::White) {
                              if (selectedCards.size() == 5) {
                                  
+                                 //hashMap.find()
                                  //history.push();
                              }
                              else {
@@ -268,7 +270,7 @@ int main() {
                 }
             }
 
-            if (event.type == sf::Event::TextEntered)
+            if (event.type == sf::Event::TextEntered && button2.getFillColor() == sf::Color::White)
             {
                 qualityInput = event.text.unicode;
                 qualityText.setString(qualityInput);
