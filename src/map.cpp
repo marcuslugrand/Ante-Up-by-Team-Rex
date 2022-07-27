@@ -29,9 +29,9 @@ private:
     // Inititialize map variables
     map* create(std::vector<Card> first);
 
-    const int search(std::vector<Card> _first) const
+    const int search(std::vector<Card> first) const
     {
-        const map* temp = iterator(_first);
+        const map* temp = iterator(first);
         if (temp != nullptr) {
             return temp->second;
         }
