@@ -45,7 +45,7 @@ public:
     map* left = nullptr;
     map* right = nullptr;
     map* parent = nullptr;
-    std::vector<Card> first;
+    std::vector<Card> _first;
     int second = 0;
     int depth = 0;
 
