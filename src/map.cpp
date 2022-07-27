@@ -34,7 +34,7 @@ void map::balance(map* node)
     }
 }
 
-map* map::iterator(std::vector<Card> first)
+map* map::iterator(std::vector<Card>& first)
 {
     map* tmp = root;
     while (tmp != nullptr && tmp->first != first) {
@@ -48,7 +48,7 @@ map* map::iterator(std::vector<Card> first)
     return tmp;
 }
 
-const map* map::iterator(std::vector<Card> first) const
+const map* map::iterator(std::vector<Card>& first) const
 {
     map* tmp = root;
     while (tmp != nullptr && tmp->first != first) {
