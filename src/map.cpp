@@ -1,5 +1,6 @@
 #include "map.h"
 #include <iterator>
+#include <string>
 
 
 void map::balance(map* node)
@@ -37,8 +38,8 @@ void map::balance(map* node)
 map* map::iterator(std::vector<Card>& first)
 {
     map* tmp = root;
-    while (tmp != nullptr && tmp->first != first) {
-        if (first < tmp->first) {
+    while (tmp != nullptr && tmp->_first != first) {
+        if (first < tmp->_first) {
             tmp = tmp->left;
         }
         else {
@@ -51,8 +52,8 @@ map* map::iterator(std::vector<Card>& first)
 const map* map::iterator(std::vector<Card>& first) const
 {
     map* tmp = root;
-    while (tmp != nullptr && tmp->first != first) {
-        if (first < tmp->first) {
+    while (tmp != nullptr && tmp->_first != first) {
+        if (first < tmp->_first) {
             tmp = tmp->left;
         }
         else {
@@ -147,10 +148,10 @@ map* map::insertMap(std::vector<Card> first)
     while (temp != nullptr) {
         prev = temp;
 
-        if (first < temp->first) {
+        if (first < temp->_first) {
             temp = temp->left;
         }
-        else if (first > temp->first) {
+        else if (first > temp->_first) {
             temp = temp->right;
         }
         else {
@@ -159,7 +160,7 @@ map* map::insertMap(std::vector<Card> first)
             return temp;
         }
     }
-    if (first < prev->first) {
+    if (first < prev->_first) {
         prev->left = newNode;
     }
     else {
@@ -183,7 +184,7 @@ int map::depthofTree(map* node)
 map* map::create(std::vector<Card> first)
 {
     map* newnode = (map*)malloc(sizeof(map));
-    newnode->first = first;
+    newnode->_first = first;
     newnode->second = 0;
     newnode->left = nullptr;
     newnode->right = nullptr;
@@ -198,12 +199,12 @@ int map::size(void) {
 
 void map::insert(Hand hand)
 {
-    first = hand.cards;
+    _first = hand.cards;
     second = hand.qualty;
 
-    map* temp = iterator(first);
+    map* temp = iterator(_first);
     if (temp == nullptr) {
-        insertMap(first)->second = hand.qualty;
+        insertMap(_first)->second = hand.qualty;
     }
     else {
         temp->second = second;
@@ -213,8 +214,8 @@ void map::insert(Hand hand)
 }
 
 const int map::find(const Hand& hand) {
-    first = hand.cards;
-    int qual = iterator(first)->second;
+    _first = hand.cards;
+    int qual = iterator(_first)->second;
     return qual;
 }
 
