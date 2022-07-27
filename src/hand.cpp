@@ -11,9 +11,11 @@ Card::Card(int suit, int rank) {
 
 bool Card::cardCompare(Card& a)
 {
-    if (this->suit != a.suit || this->rank != a.rank)
+    /*if (this->suit != a.suit || this->rank != a.rank)
         return false;
-    return true;
+    return true;*/
+    //Just call the const version with a cast
+    return static_cast<const Card&>(*this).cardCompare(a);
 }
 
 bool Card::cardCompare(Card& a) const
@@ -25,12 +27,14 @@ bool Card::cardCompare(Card& a) const
 
 bool Hand::handCompare(Hand& a)
 {
-    for (int i = 0; i < 5; ++i)
+    /*for (int i = 0; i < 5; ++i)
     {
         if (!this->cards.at(i).cardCompare(a.cards.at(i)))
             return false;
     }
-    return true;
+    return true;*/
+    //Just call the const version with a cast
+    return static_cast<const Hand&>(*this).handCompare(a);
 }
 bool Hand::handCompare(Hand& a) const
 {
