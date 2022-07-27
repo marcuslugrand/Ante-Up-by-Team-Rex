@@ -27,6 +27,7 @@ private:
 
     //Load Factor Re-balancing
     void rehash();
+    void rehashInsert(const Hand& hand);
 
 public:
     //=== Constructor ===

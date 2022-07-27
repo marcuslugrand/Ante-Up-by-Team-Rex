@@ -43,7 +43,7 @@ size_t unordered_hand_map::probe(const int c, const int i, const size_t index)
     int p = pow(c, i);
 
     //Roll over index if it overflows
-    if((index + p) >= qualToHand.capacity())
+    if((index + p) >= handToQual.capacity())
     {
         return reduce((index + p));
     }
@@ -62,16 +62,41 @@ void unordered_hand_map::rehash()
     handToQual.clear();
     handToQual.resize(newSize);
 
+    //Re-set entries and load factor
+    numEntries = 0;
+    loadFactor = 0.0f;
+
     //Re-insert all key : val
-    for(int i = 0; i < qualToHand.size(); ++i)
+    for(auto& handList : qualToHand)
     {
-        for(auto& hand : qualToHand.at(i))
+        for(auto& hand : handList)
         {
             //Hand h(hand.cards, hand.qualty);
-            insert(hand);
+            rehashInsert(hand);
         }
     }
 
+}
+void unordered_hand_map::rehashInsert(const Hand& hand)
+{
+    //1. Hash: Get unique hash ID, reduce to get index
+    size_t h = hash(hand);
+    size_t index = reduce(h);
+
+    //If something is present at index: probe
+    if(!handToQual.at(index).first.empty())
+    {
+        index = collisionResolution(index, hand);
+    }
+
+    //3. Insert
+    //Replace with .at(index)
+    //handToQual.insert((handToQual.begin() + index), std::make_pair(hand.cards, hand.qualty));
+    handToQual.at(index) = (std::make_pair(hand.cards, hand.qualty));
+
+    //Update size and load factor
+    ++numEntries;
+    loadFactor = double(numEntries) / double(handToQual.capacity());
 }
 /*
  * Public member functions
@@ -80,7 +105,7 @@ void unordered_hand_map::rehash()
 unordered_hand_map::unordered_hand_map()
 : numEntries(0),
   loadFactor(0.0f),
-  handToQual(997),  //Closest prime to 1000
+  handToQual(1330000),  //Closest prime to 1000
   qualToHand(10)    //# of possible hand qualities
 {}
 //=== Accessors ===
@@ -113,20 +138,22 @@ bool unordered_hand_map::insert(const Hand& hand)
     }
 
     //3. Insert
-    handToQual.insert((handToQual.begin() + index), std::make_pair(hand.cards, hand.qualty));
+    //Replace with .at(index)
+    //handToQual.insert((handToQual.begin() + index), std::make_pair(hand.cards, hand.qualty));
+    handToQual.at(index) = (std::make_pair(hand.cards, hand.qualty));
 
     //Update size and load factor
     ++numEntries;
     loadFactor = double(numEntries) / double(handToQual.capacity());
+
+    //Insert into quality list
+    qualToHand.at(hand.qualty).push_back(hand);
 
     //4. Check load factor, rebalance/rehash if necessary
     if(loadFactor > MAX_LOAD_FACTOR)
     {
         rehash();
     }
-
-    //Insert into quality list
-    qualToHand.at(hand.qualty).push_back(hand);
 
     return true;
 }
