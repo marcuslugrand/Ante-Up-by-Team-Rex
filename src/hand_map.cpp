@@ -1,9 +1,10 @@
 #include "map.h"
 #include <iterator>
 #include <string>
+#include <functional>
 
 
-void hand_map::balance(hand_map* node)
+void map::balance(map* node)
 {
     while (node != root) {
         int d = node->depth;
@@ -35,11 +36,20 @@ void hand_map::balance(hand_map* node)
     }
 }
 
-hand_map* hand_map::iterator(std::vector<Card>& first)
+map* map::iterator(std::vector<Card>& first)
 {
-    hand_map* tmp = root;
-    while (tmp != nullptr && tmp->_first != first) {
-        if (first < tmp->_first) {
+    map* tmp = root;
+
+    int sum1 = 0;
+    int sum2 = 0;
+    
+    for (std::vector<Card>::iterator it = first.begin(), end = first.end(); it != end; ++it)
+        sum1 = sum1 + (*it).rank + (*it).suit;
+    for (std::vector<Card>::iterator it = tmp->_first.begin(), end = tmp->_first.end(); it != end; ++it)
+        sum2 = sum2 + (*it).rank + (*it).suit;
+
+    while (tmp != nullptr && sum1 != sum2) {
+        if (sum1 < sum2) {
             tmp = tmp->left;
         }
         else {
@@ -49,11 +59,20 @@ hand_map* hand_map::iterator(std::vector<Card>& first)
     return tmp;
 }
 
-const hand_map* hand_map::iterator(std::vector<Card>& first) const
+const map* map::iterator(std::vector<Card>& first) const
 {
-    hand_map* tmp = root;
-    while (tmp != nullptr && tmp->_first != first) {
-        if (first < tmp->_first) {
+    map* tmp = root;
+
+    int sum1 = 0;
+    int sum2 = 0;
+
+    for (std::vector<Card>::iterator it = first.begin(), end = first.end(); it != end; ++it)
+        sum1 = sum1 + (*it).rank + (*it).suit;
+    for (std::vector<Card>::iterator it = tmp->_first.begin(), end = tmp->_first.end(); it != end; ++it)
+        sum2 = sum2 + (*it).rank + (*it).suit;
+
+    while (tmp != nullptr && sum1 != sum2) {
+        if (sum1 < sum2) {
             tmp = tmp->left;
         }
         else {
@@ -63,9 +82,9 @@ const hand_map* hand_map::iterator(std::vector<Card>& first) const
     return tmp;
 }
 
-void hand_map::leftRot(hand_map* a)
+void map::leftRot(map* a)
 {
-    hand_map* b = a->right;
+    map* b = a->right;
     a->right = b->left;
 
     if (b->left != nullptr) {
@@ -83,9 +102,9 @@ void hand_map::leftRot(hand_map* a)
     a->parent = b;
 }
 
-void hand_map::rightRot(hand_map* x)
+void map::rightRot(map* x)
 {
-    hand_map* y = x->left;
+    map* y = x->left;
     x->left = y->right;
 
     if (y->right != nullptr) {
@@ -103,7 +122,7 @@ void hand_map::rightRot(hand_map* x)
     x->parent = y;
 }
 
-void hand_map::rotator(hand_map* node) {
+void map::rotator(map* node) {
     if (depthofTree(node->left)
         - depthofTree(node->right) > 1) {
         if (depthofTree(node->left->left) > depthofTree(node->left->right)) {
@@ -135,23 +154,32 @@ void hand_map::rotator(hand_map* node) {
     }
 }
 
-hand_map* hand_map::insertMap(std::vector<Card> first)
+map* map::insertMap(std::vector<Card> first)
 {
     count++;
-    hand_map* newNode = create(first);
+    map* newNode = create(first);
     if (root == nullptr) {
         root = newNode;
         return root;
     }
-    hand_map* temp = root;
-    hand_map* prev = nullptr;
+    map* temp = root;
+    map* prev = nullptr;
+
+    int sum1 = 0;
+    int sum2 = 0;
+
+    for (std::vector<Card>::iterator it = first.begin(), end = first.end(); it != end; ++it)
+        sum1 = sum1 + (*it).rank + (*it).suit;
+    for (std::vector<Card>::iterator it = temp->_first.begin(), end = temp->_first.end(); it != end; ++it)
+        sum2 = sum2 + (*it).rank + (*it).suit;
+
     while (temp != nullptr) {
         prev = temp;
 
-        if (first < temp->_first) {
+        if (sum1 < sum2) {
             temp = temp->left;
         }
-        else if (first > temp->_first) {
+        else if (sum1 > sum2) {
             temp = temp->right;
         }
         else {
@@ -160,7 +188,7 @@ hand_map* hand_map::insertMap(std::vector<Card> first)
             return temp;
         }
     }
-    if (first < prev->_first) {
+    if (sum1 < sum2) {
         prev->left = newNode;
     }
     else {
@@ -171,7 +199,7 @@ hand_map* hand_map::insertMap(std::vector<Card> first)
     return newNode;
 }
 
-int hand_map::depthofTree(hand_map* node)
+int map::depthofTree(map* node)
 {
     if (node == nullptr) {
 
@@ -181,9 +209,9 @@ int hand_map::depthofTree(hand_map* node)
     return node->depth;
 }
 
-hand_map* hand_map::create(std::vector<Card> first)
+map* map::create(std::vector<Card> first)
 {
-    hand_map* newnode = (hand_map*)malloc(sizeof(hand_map));
+    map* newnode = (map*)malloc(sizeof(map));
     newnode->_first = first;
     newnode->second = 0;
     newnode->left = nullptr;
@@ -193,16 +221,16 @@ hand_map* hand_map::create(std::vector<Card> first)
     return newnode;
 }
 
-int hand_map::size(void) {
+int map::size(void) {
     return count;
 }
 
-void hand_map::insert(Hand hand)
+void map::insert(Hand hand)
 {
     _first = hand.cards;
     second = hand.qualty;
 
-    hand_map* temp = iterator(_first);
+    map* temp = iterator(_first);
     if (temp == nullptr) {
         insertMap(_first)->second = hand.qualty;
     }
@@ -213,13 +241,13 @@ void hand_map::insert(Hand hand)
 
 }
 
-const int hand_map::find(const Hand& hand) {
+const int map::find(const Hand& hand) {
     _first = hand.cards;
     int qual = iterator(_first)->second;
     return qual;
 }
 
-std::vector<Hand> hand_map::find(const int qualty) {
+std::vector<Hand> map::find(const int qualty) {
     //map* head = root;
     //iterforQual(head, qualty);
     int qTemp = qualty;
