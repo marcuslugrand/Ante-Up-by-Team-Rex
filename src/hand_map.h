@@ -40,14 +40,8 @@ private:
 
 public:
     //static class map* root;
-    int count = 0;
-    hand_map* root = nullptr;
-    hand_map* left = nullptr;
-    hand_map* right = nullptr;
-    hand_map* parent = nullptr;
-    std::vector<Card> _first;
-    int second = 0;
-    int depth = 0;
+    
+    hand_map();
 
     int operator[](std::vector<Card> key) {
         return insertMap(key)->second;
