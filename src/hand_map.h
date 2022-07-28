@@ -41,6 +41,15 @@ private:
 public:
     //static class map* root;
     
+    std::vector<Card> _first;
+    int second;
+    int count;
+    int depth;
+    hand_map* root;
+    hand_map* left;
+    hand_map* right;
+    hand_map* parent;
+
     hand_map();
 
     int operator[](std::vector<Card> key) {
