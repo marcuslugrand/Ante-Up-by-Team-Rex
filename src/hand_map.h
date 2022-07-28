@@ -2,36 +2,36 @@
 #include <iostream>
 #include "hand.h"
 
-class hand_map {
+class map {
 
 private:
     // Balance the tree
-    void balance(hand_map* node);
+    void balance(map* node);
 
     //iterate through keys
-    hand_map* iterator(std::vector<Card> &first);
+    map* iterator(std::vector<Card>& first);
 
-    const hand_map* iterator(std::vector<Card> &first) const;
+    const map* iterator(std::vector<Card>& first) const;
 
-    void leftRot(hand_map* a);
+    void leftRot(map* a);
 
-    void rightRot(hand_map* x);
+    void rightRot(map* x);
 
     // Rotate through tree
-    void rotator(hand_map* node);
+    void rotator(map* node);
 
     // Function to insert a value in map
-    hand_map* insertMap(std::vector<Card> first);
+    map* insertMap(std::vector<Card> first);
 
     // depth at node
-    int depthofTree(hand_map* node);
+    int depthofTree(map* node);
 
     // Inititialize map variables
-    hand_map* create(std::vector<Card> first);
+    map* create(std::vector<Card> first);
 
     const int search(std::vector<Card> _first) const
     {
-        const hand_map* temp = iterator(_first);
+        const map* temp = iterator(_first);
         if (temp != nullptr) {
             return temp->second;
         }
@@ -41,10 +41,10 @@ private:
 public:
     //static class map* root;
     int count = 0;
-    hand_map* root = nullptr;
-    hand_map* left = nullptr;
-    hand_map* right = nullptr;
-    hand_map* parent = nullptr;
+    map* root = nullptr;
+    map* left = nullptr;
+    map* right = nullptr;
+    map* parent = nullptr;
     std::vector<Card> _first;
     int second = 0;
     int depth = 0;
@@ -85,7 +85,6 @@ public:
         if (head->right != nullptr) {
             iterforQual(head->right);
         }
-
     }*/
 
     // Returns number of elements in the map
