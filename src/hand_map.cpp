@@ -44,10 +44,10 @@ hand_map* hand_map::iterator(std::vector<Card>& first)
     int sum2 = 0;
 
     for (int i = 0; i < 5; i++)
-        sum1 = sum1 + first.rank + (first.suit * 13);
+        sum1 = sum1 + first.at(i).rank + (first.at(i).suit * 13);
     if (tmp->_first != nullptr)
         for (int i = 0; i < 5; i++)
-            sum2 = sum2 + tmp->_first.rank + tmp->_first.suit * 13);
+            sum2 = sum2 + tmp->_first.at(i).rank + tmp->_first.at(i).suit * 13);
     else
         sum2 = 0;
 
@@ -69,10 +69,13 @@ const hand_map* hand_map::iterator(std::vector<Card>& first) const
     int sum1 = 0;
     int sum2 = 0;
 
-    for (std::vector<Card>::iterator it = first.begin(), end = first.end(); it != end; ++it)
-        sum1 = sum1 + (*it).rank + (*it).suit;
-    for (std::vector<Card>::iterator it = tmp->_first.begin(), end = tmp->_first.end(); it != end; ++it)
-        sum2 = sum2 + (*it).rank + (*it).suit;
+    for (int i = 0; i < 5; i++)
+        sum1 = sum1 + first.at(i).rank + (first.at(i).suit * 13);
+    if (tmp->_first != nullptr)
+        for (int i = 0; i < 5; i++)
+            sum2 = sum2 + tmp->_first.at(i).rank + tmp->_first.at(i).suit * 13);
+    else
+        sum2 = 0;
 
     while (tmp != nullptr && sum1 != sum2) {
         if (sum1 < sum2) {
