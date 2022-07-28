@@ -42,11 +42,14 @@ hand_map* hand_map::iterator(std::vector<Card>& first)
 
     int sum1 = 0;
     int sum2 = 0;
-    
-    for (std::vector<Card>::iterator it = first.begin(), end = first.end(); it != end; ++it)
-        sum1 = sum1 + (*it).rank + (*it).suit;
-    for (std::vector<Card>::iterator it = tmp->_first.begin(), end = tmp->_first.end(); it != end; ++it)
-        sum2 = sum2 + (*it).rank + (*it).suit;
+
+    for (int i = 0; i < 5; i++)
+        sum1 = sum1 + first.rank + (first.suit * 13);
+    if (tmp->_first != nullptr)
+        for (int i = 0; tmp->_first.begin(), end = tmp->_first.end(); it != end; i++)
+            sum2 = sum2 + tmp->_first.rank + tmp->_first.suit * 13);
+    else
+        sum2 = 0;
 
     while (tmp != nullptr && sum1 != sum2) {
         if (sum1 < sum2) {
@@ -231,6 +234,7 @@ void hand_map::insert(Hand hand)
     second = hand.qualty;
 
     hand_map* temp = iterator(_first);
+    for(int i = 0 )
     if (temp == nullptr) {
         insertMap(_first)->second = hand.qualty;
     }
@@ -238,7 +242,6 @@ void hand_map::insert(Hand hand)
         temp->second = second;
     }
     qualtoHand.at(second).push_back(hand);
-
 }
 
 const int hand_map::find(const Hand& hand) {
