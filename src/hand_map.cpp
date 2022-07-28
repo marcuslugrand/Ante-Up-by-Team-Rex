@@ -46,7 +46,7 @@ hand_map* hand_map::iterator(std::vector<Card>& first)
     for (int i = 0; i < 5; i++)
         sum1 = sum1 + first.rank + (first.suit * 13);
     if (tmp->_first != nullptr)
-        for (int i = 0; tmp->_first.begin(), end = tmp->_first.end(); it != end; i++)
+        for (int i = 0; i < 5; i++)
             sum2 = sum2 + tmp->_first.rank + tmp->_first.suit * 13);
     else
         sum2 = 0;
