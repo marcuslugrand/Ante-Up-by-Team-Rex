@@ -8,13 +8,13 @@
 #include <unordered_set>
 #include <queue>
 #include "Record.h"
-//#include "hand_map.h"
+#include "hand_map.h"
 #include "unordered_hand_map.h"
 #include <chrono>
 
 using namespace std;
 
-void importFile(string file, unordered_hand_map hashMap/*, hand_map treeMap*/) {
+void importFile(string file, unordered_hand_map hashMap, hand_map treeMap) { //Inserts the data into the HashMap and the TreeMap
     ifstream data(file);
     if (data.is_open()) {
         while (!data.eof()) {
@@ -36,12 +36,12 @@ void importFile(string file, unordered_hand_map hashMap/*, hand_map treeMap*/) {
 
             Hand hand = Hand(cards, stoi(quality));
             hashMap.insert(hand);
-           // treeMap.insert(hand);
+            treeMap.insert(hand);
         }
     }
 }
 
-//Function taken from https://www.geeksforgeeks.org/how-to-create-an-unordered_map-of-pairs-in-c/
+//Function taken from https://www.geeksforgeeks.org/how-to-create-an-unordered_map-of-pairs-in-c/ used to hash pairs
 struct hash_pair {
     template <class T1, class T2>
     size_t operator()(const pair<T1, T2>& p) const
@@ -60,14 +60,20 @@ struct hash_pair {
 
 int main() { 
     unordered_hand_map hashMap;
-    //hand_map treeMap;
+    hand_map treeMap;
 
     //import data
-    importFile("test1.data", hashMap/*, treeMap*/);
-    //importFile("poker-hand-testing.data", hashMap);
+    importFile("test1.data", hashMap, treeMap);
     
     sf::RenderWindow window(sf::VideoMode(1800, 800), "Ante Up");
     
+    //Load Font
+    sf::Font font;
+    if (!font.loadFromFile("arial.ttf"))
+    {
+        cout << "error!" << endl;
+    }
+
     //Divider
     sf::RectangleShape divider(sf::Vector2f(10, 800));
     divider.setPosition(800, 0);
@@ -91,11 +97,6 @@ int main() {
     middle.setOutlineThickness(5);
     
     //Titles
-    sf::Font font;
-    if (!font.loadFromFile("arial.ttf"))
-    {
-        cout << "error!" << endl;
-    }
     sf::Text title ("History", font);
     title.setPosition(540, 10);
     title.setCharacterSize(30);
@@ -118,6 +119,8 @@ int main() {
     sf::Texture allCards;
     allCards.loadFromFile("cards.png");
     unordered_map<pair<int, int>, sf::Sprite,hash_pair> cardImages;
+    
+    //Match card Img with Card suit/rank
     for (int suit = 1; suit <= 4; suit++) {
         for (int rank = 1; rank <= 13; rank++) {
             sf::Sprite temp(allCards, sf::IntRect(73 * (rank - 1), 98 * (suit - 1), 73, 98));
@@ -134,7 +137,7 @@ int main() {
         }
     }
     
-    //Selection
+    //---Selection---
     unordered_set<pair<short, short>, hash_pair> selectedCardsSet;
     queue<pair<short, short>> selectedCardsQueue;
     sf::RectangleShape select(sf::Vector2f(73, 98));
@@ -157,16 +160,6 @@ int main() {
     button2.setOutlineColor(sf::Color::White);
     button2.setOutlineThickness(1);
     button2.setPosition(10, 100);
-    sf::RectangleShape button3(sf::Vector2f(20, 20));
-    button3.setFillColor(sf::Color::Transparent);
-    button3.setOutlineColor(sf::Color::White);
-    button3.setOutlineThickness(1);
-    button3.setPosition(10, 150);
-    sf::RectangleShape button4(sf::Vector2f(20, 20));
-    button4.setFillColor(sf::Color::Transparent);
-    button4.setOutlineColor(sf::Color::White);
-    button4.setOutlineThickness(1);
-    button4.setPosition(10, 200);
 
     //Run
     sf::RectangleShape runButton(sf::Vector2f(100, 50));
@@ -182,7 +175,6 @@ int main() {
     char qualityInput;
     sf::Text qualityText("",font);
     qualityText.setPosition(1240, 355);
-    //qualityText.setFillColor(sf::Color::White);
     sf::RectangleShape textbox(sf::Vector2f(100, 50));
     textbox.setFillColor(sf::Color::Transparent);
     textbox.setOutlineColor(sf::Color::White);
@@ -200,12 +192,13 @@ int main() {
     sf::Text runTime("", font);
     sf::Text optionType("", font);
    
-    while (window.isOpen())
-    {
+    while (window.isOpen()){
         
+        window.clear();
+
         sf::Event event;
-        while (window.pollEvent(event))
-        {
+        while (window.pollEvent(event)){
+            
             if (event.type == sf::Event::Closed)
                 window.close();
 
@@ -217,34 +210,25 @@ int main() {
                     if (mousePosition.y < 70 && mousePosition.y > 50 && mousePosition.x < 30 && mousePosition.x > 10) {
                         button1.setFillColor(sf::Color::White);
                         button2.setFillColor(sf::Color::Transparent);
-                        button3.setFillColor(sf::Color::Transparent);
-                        button4.setFillColor(sf::Color::Transparent);
                         result.setString("");
                     }
                     //option 2
                      if (mousePosition.y < 120 && mousePosition.y > 100 && mousePosition.x < 30 && mousePosition.x > 10) {
                         button1.setFillColor(sf::Color::Transparent);
                         button2.setFillColor(sf::Color::White);
-                        button3.setFillColor(sf::Color::Transparent);
-                        button4.setFillColor(sf::Color::Transparent);
                         result.setString("");
-                    }
-                     /*//option 3
-                    if (mousePosition.y < game.GetHeight() * 32 && game.state == 1) {
-
-                    }
-                    //option 4
-                    if (mousePosition.y < game.GetHeight() * 32 && game.state == 1) {
-
-                    }
-                    *///cards
-                     if (mousePosition.y > 100 && mousePosition.y < 500 && mousePosition.x > 820 && mousePosition.x < 1780) {
+                     }
+                        
+                     //Card Selection
+                     if (mousePosition.y > 100 && mousePosition.y < 500 && mousePosition.x > 820 && mousePosition.x < 1780 && button1.getFillColor() == sf::Color::White) {
                          short suit = (mousePosition.y - 100) / 100 + 1;
                          short rank = (mousePosition.x - 820) / 75 + 1;
+                         
                          if (selectedCardsSet.find(make_pair(suit, rank)) == selectedCardsSet.end()) {
                              selectedCardsSet.insert(make_pair(suit, rank));
                              selectedCardsQueue.push(make_pair(suit, rank));
                          }
+                         
                          if (selectedCardsSet.size() > 5) {
                              selectedCardsSet.erase(selectedCardsQueue.front());
                              selectedCardsQueue.pop();
@@ -268,19 +252,37 @@ int main() {
                                  selectedCardsSet.clear();
                                  Hand temp = Hand(hand, -1); 
                                  
+                                 //----Hash Map----
                                  //timer start
                                  auto start = std::chrono::high_resolution_clock::now();
 
-                                 int quality = hashMap.find(temp); //Hash Map find
+                                 /*int quality = */hashMap.find(temp); //Hash Map find
                                 
                                  //timer end
                                  auto stop = std::chrono::high_resolution_clock::now();
 
                                  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+                                 
+                                 //Update History Table
                                  Record record = Record("Option 1", "Hash Map", duration.count());
+                                 history.push(record);
 
+                                 //----Tree Map----
+                                 //timer start
+                                 start = std::chrono::high_resolution_clock::now();
+
+                                 int quality = treeMap.find(temp); //Hash Map find
+
+                                 //timer end
+                                 stop = std::chrono::high_resolution_clock::now();
+
+                                 duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+                                 
+                                 //Update History Table
+                                 record = Record("Option 2", "Tree Map", duration.count());
                                  history.push(record);
                                  
+                                 //Output Result
                                  switch (quality){
                                  case 0:
                                      result.setString("The Selected hand is: Nothing in hand; not a recognized poker hand");
@@ -318,7 +320,7 @@ int main() {
                                  }
                                  
                              }
-                             else {
+                             else { //If selection is < 5 cards
                                  result.setString("Please select a valid 5 card hand.");
 
                              }
@@ -326,19 +328,37 @@ int main() {
                          if (button2.getFillColor() == sf::Color::White) {
                             if (isdigit(qualityInput)) { //Selected hand size validation
 
+                                //----Hash Map----
                                 //timer start
                                 auto start = std::chrono::high_resolution_clock::now();
 
-                                vector<Hand> hands = hashMap.find((int)(qualityInput - '0')); //Hash Map find
+                                /*vector<Hand> hands = */hashMap.find((int)(qualityInput - '0')); //Hash Map find
 
                                 //timer end
                                 auto stop = std::chrono::high_resolution_clock::now();
 
                                 auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+                                
+                                //Update History Table
                                 Record record = Record("Option 2", "Hash Map", duration.count());
-
                                 history.push(record);
 
+                                //----Tree Map----
+                                //timer start
+                                start = std::chrono::high_resolution_clock::now();
+
+                                vector<Hand> hands = treeMap.find((int)(qualityInput - '0')); //Hash Map find
+
+                                //timer end
+                                stop = std::chrono::high_resolution_clock::now();
+
+                                duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+                                
+                                //Update History Table
+                                record = Record("Option 2", "Tree Map", duration.count());
+                                history.push(record);
+
+                                //Display Found Hands
                                 for (int h = 0; h < hands.size(); h++) {
                                     for (int c = 0; c < hands[h].cards.size(); c++) {
                                         cardImages[make_pair(hands[h].cards[c].suit, hands[h].cards[c].rank)].setPosition(820 + 75 * c + 6 * 75 * (h % 2), 100 * (h+1) % 2);
@@ -347,7 +367,7 @@ int main() {
                                 }
 
                             }
-                            else {
+                            else { //If apha is entered instead of digit
                                 result.setString("Please select a valid numeric quality (0-9).");
                             }
                          }
@@ -356,14 +376,14 @@ int main() {
                 }
             }
 
+            //Text input for option 2
             if (event.type == sf::Event::TextEntered && button2.getFillColor() == sf::Color::White)
             {
                 qualityInput = event.text.unicode;
                 qualityText.setString(qualityInput);
             }
         }
-
-        window.clear();
+        
         
         //draw static elements
         window.draw(divider);
@@ -376,8 +396,6 @@ int main() {
         window.draw(subtitle3);
         window.draw(button1);
         window.draw(button2);
-        window.draw(button3);
-        window.draw(button4);
         window.draw(option1);
         window.draw(option2);
         window.draw(option);
@@ -385,7 +403,9 @@ int main() {
         window.draw(runText);
 
         //draw dynamic elements
-        if(button1.getFillColor() == sf::Color::White) {
+        if(button1.getFillColor() == sf::Color::White) { //Option 1 only 
+            
+            //Draw All Cards
             for (int suit = 1; suit <= 4; suit++) {
                 for (int rank = 1; rank <= 13; rank++) {
                     cardImages[make_pair(suit, rank)].setPosition(820 + 75 * (rank - 1), 100 * suit);
@@ -393,12 +413,14 @@ int main() {
                 }
             }
 
+            //Outline Selected Cards
             for (auto cards : selectedCardsSet) {
                 select.setPosition(820 + 75 * (cards.second - 1), 100 * cards.first);
                 window.draw(select);
                 //cout << 820 + 75 * (cards.second - 1) << " " << 100 * cards.first << endl;
             }
             
+            //Display number of Chosen Cards out of 5
             string slash = "/";
             string slectionSize = to_string(selectedCardsSet.size());
             string five = "5";
@@ -409,11 +431,14 @@ int main() {
 
             numSelect.setString(slectionSize+ slash + five);
             window.draw(numSelect);
+
         }
-        else {
+        else { //Option 2 Only
             window.draw(textbox);
             window.draw(qualityText);
         }
+       
+        //Display History Table Information
         queue<Record> temp(history);
         for (int i = 0; i < temp.size(); i++) {
             dataStruct.setString(temp.front().dataStruct);
@@ -429,6 +454,7 @@ int main() {
             window.draw(runTime);
         }
 
+        //Display result of Run
         window.draw(result);
 
         window.display();
