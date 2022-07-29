@@ -5,15 +5,14 @@
 
 
 hand_map::hand_map() {
-    std::vector<Card> _first;
-    int second = 0;
-    int count = 0;
-    int depth = 0;
-    hand_map* root = nullptr;
-    hand_map* left = nullptr;
-    hand_map* right = nullptr;
-    hand_map* parent = nullptr;
-}
+    second = 0;
+    count = 0;
+    depth = 0;
+    root = nullptr;
+    left = nullptr;
+    right = nullptr;
+    parent = nullptr;
+    }
 
 void hand_map::balance(hand_map* node)
 {
@@ -62,7 +61,7 @@ hand_map* hand_map::iterator(std::vector<Card>& first)
     else
         sum2 = 0;
 
-    while (tmp!= nullptr && sum1 != sum2) {
+    while (tmp != nullptr && sum1 != sum2) {
         if (sum1 < sum2) {
             tmp = tmp->left;
         }
@@ -82,7 +81,7 @@ const hand_map* hand_map::iterator(std::vector<Card>& first) const
 
     for (int i = 0; i < 5; i++)
         sum1 = sum1 + first.at(i).rank + (first.at(i).suit * 13);
-    if (tmp!= nullptr)
+    if (tmp != nullptr)
         for (int i = 0; i < 5; i++)
             sum2 = sum2 + tmp->_first.at(i).rank + tmp->_first.at(i).suit * 13;
     else
