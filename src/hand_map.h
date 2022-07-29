@@ -41,7 +41,7 @@ private:
 public:
     //static class map* root;
     hand_map();
-    
+
     std::vector<Card> _first;
     int second{};
     int count{};
@@ -51,7 +51,7 @@ public:
     hand_map* right{};
     hand_map* parent{};
 
-    
+
 
     int operator[](std::vector<Card> key) {
         return insertMap(key)->second;
@@ -102,4 +102,4 @@ public:
 };
 
 //map* map::root = nullptr;
-//int map::size = 0;
+//int map::size = 0;#pragma once
