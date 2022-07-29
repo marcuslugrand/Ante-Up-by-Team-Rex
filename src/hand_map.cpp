@@ -12,7 +12,7 @@ hand_map::hand_map() {
     left = nullptr;
     right = nullptr;
     parent = nullptr;
-    }
+}
 
 void hand_map::balance(hand_map* node)
 {
