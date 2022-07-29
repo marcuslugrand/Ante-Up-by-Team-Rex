@@ -2,36 +2,62 @@
 #include <iostream>
 #include "hand.h"
 
+class Node {
+public:
+    std::vector<Card> _first;
+    int second;
+    int depth;
+
+    Node* left;
+    Node* right;
+    Node* parent;
+
+    Node() {
+        left = nullptr;
+        right = nullptr;
+        parent = nullptr;
+    };
+
+    Node(std::vector<Card> first, int _second) {
+        _first = first;
+        second = _second;
+
+        left = nullptr;
+        right = nullptr;
+        parent = nullptr;
+    };
+};
+
 class hand_map {
 
 private:
     // Balance the tree
-    void balance(hand_map* node);
+    void balance(Node* node);
 
     //iterate through keys
-    hand_map* iterator(std::vector<Card>& first);
+    Node* iterator(std::vector<Card>& first);
 
-    const hand_map* iterator(std::vector<Card>& first) const;
+    const Node* iterator(std::vector<Card>& first) const;
 
-    void leftRot(hand_map* a);
+    void leftRot(Node* a);
 
-    void rightRot(hand_map* x);
+    void rightRot(Node* x);
 
     // Rotate through tree
-    void rotator(hand_map* node);
+    void rotator(Node* node);
 
     // Function to insert a value in map
-    hand_map* insertMap(std::vector<Card> first);
+    Node* insertMap(Node *root, std::vector<Card> first, int second);
 
     // depth at node
-    int depthofTree(hand_map* node);
+    int depthofTree(Node* node);
 
     // Inititialize map variables
-    hand_map* create(std::vector<Card> first);
+    Node* create(std::vector<Card> first, int second);
 
     const int search(std::vector<Card> _first) const
     {
-        const hand_map* temp = iterator(_first);
+        const Node* temp = iterator(_first);
         if (temp != nullptr) {
             return temp->second;
         }
@@ -40,22 +66,19 @@ private:
 
 public:
     //static class map* root;
-    hand_map();
-
-    std::vector<Card> _first;
-    int second{};
+    Node* root;
     int count{};
     int depth{};
-    hand_map* root{};
-    hand_map* left{};
-    hand_map* right{};
-    hand_map* parent{};
+    
+    hand_map();
+    
+    //Node* parent;
 
 
 
-    int operator[](std::vector<Card> key) {
-        return insertMap(key)->second;
-    }
+    //int operator[](std::vector<Card> key) {
+    //    return insertMap(key)->second;
+    //}
 
     const int operator[](std::vector<Card> key) const
     {
