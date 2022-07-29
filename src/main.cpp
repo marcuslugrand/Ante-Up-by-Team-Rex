@@ -8,12 +8,13 @@
 #include <unordered_set>
 #include <queue>
 #include "Record.h"
-#include "hand_map.h"
+//#include "hand_map.h"
 #include "unordered_hand_map.h"
+#include <chrono>
 
 using namespace std;
 
-void importFile(string file, unordered_hand_map hashMap, hand_map treeMap ) {
+void importFile(string file, unordered_hand_map hashMap/*, hand_map treeMap*/) {
     ifstream data(file);
     if (data.is_open()) {
         while (!data.eof()) {
@@ -35,7 +36,7 @@ void importFile(string file, unordered_hand_map hashMap, hand_map treeMap ) {
 
             Hand hand = Hand(cards, stoi(quality));
             hashMap.insert(hand);
-            treeMap.insert(hand);
+           // treeMap.insert(hand);
         }
     }
 }
@@ -59,10 +60,10 @@ struct hash_pair {
 
 int main() { 
     unordered_hand_map hashMap;
-    hand_map treeMap;
+    //hand_map treeMap;
 
     //import data
-    importFile("test1.data", hashMap, treeMap);
+    importFile("test1.data", hashMap/*, treeMap*/);
     //importFile("poker-hand-testing.data", hashMap);
     
     sf::RenderWindow window(sf::VideoMode(1800, 800), "Ante Up");
@@ -134,7 +135,8 @@ int main() {
     }
     
     //Selection
-    unordered_set<pair<short, short>, hash_pair> selectedCards;
+    unordered_set<pair<short, short>, hash_pair> selectedCardsSet;
+    queue<pair<short, short>> selectedCardsQueue;
     sf::RectangleShape select(sf::Vector2f(73, 98));
     select.setFillColor(sf::Color::Transparent);
     select.setOutlineColor(sf::Color::Green);
@@ -177,7 +179,7 @@ int main() {
     runText.setPosition(270,730);
 
     //Option2 text input
-    string qualityInput;
+    char qualityInput;
     sf::Text qualityText("",font);
     qualityText.setPosition(1240, 355);
     //qualityText.setFillColor(sf::Color::White);
@@ -187,13 +189,16 @@ int main() {
     textbox.setOutlineThickness(1);
     textbox.setPosition(1200, 350);
 
+    //Option1 Result
+    sf::Text result("", font);
+    result.setPosition(1000, 600);
+
     //History Table
     queue<Record> history;
     sf::Text dataStruct("", font);
+    dataStruct.setCharacterSize(25);
     sf::Text runTime("", font);
     sf::Text optionType("", font);
-
-    bool displayCards = true;
    
     while (window.isOpen())
     {
@@ -214,7 +219,7 @@ int main() {
                         button2.setFillColor(sf::Color::Transparent);
                         button3.setFillColor(sf::Color::Transparent);
                         button4.setFillColor(sf::Color::Transparent);
-                        displayCards = true;
+                        result.setString("");
                     }
                     //option 2
                      if (mousePosition.y < 120 && mousePosition.y > 100 && mousePosition.x < 30 && mousePosition.x > 10) {
@@ -222,7 +227,7 @@ int main() {
                         button2.setFillColor(sf::Color::White);
                         button3.setFillColor(sf::Color::Transparent);
                         button4.setFillColor(sf::Color::Transparent);
-                        displayCards = false;
+                        result.setString("");
                     }
                      /*//option 3
                     if (mousePosition.y < game.GetHeight() * 32 && game.state == 1) {
@@ -236,34 +241,115 @@ int main() {
                      if (mousePosition.y > 100 && mousePosition.y < 500 && mousePosition.x > 820 && mousePosition.x < 1780) {
                          short suit = (mousePosition.y - 100) / 100 + 1;
                          short rank = (mousePosition.x - 820) / 75 + 1;
-                         if (selectedCards.find(make_pair(suit, rank)) == selectedCards.end()) {
-                             selectedCards.insert(make_pair(suit, rank));
+                         if (selectedCardsSet.find(make_pair(suit, rank)) == selectedCardsSet.end()) {
+                             selectedCardsSet.insert(make_pair(suit, rank));
+                             selectedCardsQueue.push(make_pair(suit, rank));
                          }
-                         else {
-                             selectedCards.erase(make_pair(suit, rank));
+                         if (selectedCardsSet.size() > 5) {
+                             selectedCardsSet.erase(selectedCardsQueue.front());
+                             selectedCardsQueue.pop();
                          }
                      }
 
                      //Run
                      if (mousePosition.y < 775 && mousePosition.y > 725 && mousePosition.x < 350 && mousePosition.x > 250) {
-                         if (button1.getFillColor() == sf::Color::White) {
-                             if (selectedCards.size() == 5) {
+                         
+                         if (button1.getFillColor() == sf::Color::White) { //Option 1
+                             
+                             if (selectedCardsSet.size() == 5) { //Selected hand size validation
                                  
-                                 //hashMap.find()
-                                 //history.push();
+                                 //convert selection to Hand
+                                 vector<Card> hand;
+                                 for (int i = 0; i < selectedCardsSet.size(); i++) {
+                                     hand.push_back(Card(selectedCardsQueue.front().first, selectedCardsQueue.front().second));
+                                     cout << selectedCardsQueue.front().first << "|" << selectedCardsQueue.front().second << endl;
+                                     selectedCardsQueue.pop();
+                                 }
+                                 selectedCardsSet.clear();
+                                 Hand temp = Hand(hand, -1); 
+                                 
+                                 //timer start
+                                 auto start = std::chrono::high_resolution_clock::now();
+
+                                 int quality = hashMap.find(temp); //Hash Map find
+                                
+                                 //timer end
+                                 auto stop = std::chrono::high_resolution_clock::now();
+
+                                 auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+                                 Record record = Record("Option 1", "Hash Map", duration.count());
+
+                                 history.push(record);
+                                 
+                                 switch (quality){
+                                 case 0:
+                                     result.setString("The Selected hand is: Nothing in hand; not a recognized poker hand");
+                                     break;
+                                 case 1:
+                                     result.setString("The Selected hand is: One pair; one pair of equal ranks within five cards");
+                                     break;
+                                 case 2:
+                                     result.setString("Two pairs; two pairs of equal ranks within five cards");
+                                     break;
+                                 case 3:
+                                     result.setString("The Selected hand is: Three of a kind; three equal ranks within five cards");
+                                     break;
+                                 case 4:
+                                     result.setString("The Selected hand is: Straight; five cards, sequentially ranked with no gaps");
+                                     break;
+                                 case 5:
+                                     result.setString("The Selected hand is: Flush; five cards with the same suit");
+                                     break;
+                                 case 6:
+                                     result.setString("The Selected hand is: Full house; pair + different rank three of a kind");
+                                     break;
+                                 case 7:
+                                     result.setString("The Selected hand is: Four of a kind; four equal ranks within five cards");
+                                     break;
+                                 case 8:
+                                     result.setString("The Selected hand is: Straight flush; straight + flush");
+                                     break;
+                                 case 9:
+                                     result.setString("The Selected hand is: Royal flush; {Ace, King, Queen, Jack, Ten} + flush");
+                                     break;
+                                 default:
+                                     result.setString("The Selected hand is not in our dataset. :(");
+                                     break;
+                                 }
+                                 
                              }
                              else {
+                                 result.setString("Please select a valid 5 card hand.");
 
                              }
                          }
                          if (button2.getFillColor() == sf::Color::White) {
-                             if (selectedCards.size() == 5) {
+                            if (isdigit(qualityInput)) { //Selected hand size validation
 
-                                 //history.push();
-                             }
-                             else {
+                                //timer start
+                                auto start = std::chrono::high_resolution_clock::now();
 
-                             }
+                                vector<Hand> hands = hashMap.find((int)(qualityInput - '0')); //Hash Map find
+
+                                //timer end
+                                auto stop = std::chrono::high_resolution_clock::now();
+
+                                auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+                                Record record = Record("Option 2", "Hash Map", duration.count());
+
+                                history.push(record);
+
+                                for (int h = 0; h < hands.size(); h++) {
+                                    for (int c = 0; c < hands[h].cards.size(); c++) {
+                                        cardImages[make_pair(hands[h].cards[c].suit, hands[h].cards[c].rank)].setPosition(820 + 75 * c + 6 * 75 * (h % 2), 100 * (h+1) % 2);
+                                        window.draw(cardImages[make_pair(hands[h].cards[c].suit, hands[h].cards[c].rank)]);
+                                    }
+                                }
+
+                            }
+                            else {
+                                result.setString("Please select a valid numeric quality (0-9).");
+                            }
                          }
                      }
                     
@@ -299,7 +385,7 @@ int main() {
         window.draw(runText);
 
         //draw dynamic elements
-        if(displayCards){
+        if(button1.getFillColor() == sf::Color::White) {
             for (int suit = 1; suit <= 4; suit++) {
                 for (int rank = 1; rank <= 13; rank++) {
                     cardImages[make_pair(suit, rank)].setPosition(820 + 75 * (rank - 1), 100 * suit);
@@ -307,16 +393,16 @@ int main() {
                 }
             }
 
-            for (auto cards : selectedCards) {
+            for (auto cards : selectedCardsSet) {
                 select.setPosition(820 + 75 * (cards.second - 1), 100 * cards.first);
                 window.draw(select);
                 //cout << 820 + 75 * (cards.second - 1) << " " << 100 * cards.first << endl;
             }
             
             string slash = "/";
-            string slectionSize = to_string(selectedCards.size());
+            string slectionSize = to_string(selectedCardsSet.size());
             string five = "5";
-            if (selectedCards.size() != 5)
+            if (selectedCardsSet.size() != 5)
                 numSelect.setFillColor(sf::Color::Red);
             else
                 numSelect.setFillColor(sf::Color::Green);
@@ -334,14 +420,16 @@ int main() {
             optionType.setString(temp.front().option);
             runTime.setString(to_string(temp.front().runTime));
 
-            dataStruct.setPosition(530,70 + 10*i);
-            optionType.setPosition(400,70 + 10*i);
-            runTime.setPosition(670, 70 + 10*i);
+            dataStruct.setPosition(530,110 + 30*i);
+            optionType.setPosition(390,110 + 30*i);
+            runTime.setPosition(715, 110 + 30*i);
 
             window.draw(dataStruct);
             window.draw(optionType);
             window.draw(runTime);
         }
+
+        window.draw(result);
 
         window.display();
     }
