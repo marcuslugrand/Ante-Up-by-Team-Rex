@@ -4,99 +4,71 @@
 
 class Node {
 public:
-    std::vector<Card> _first;
+    std::vector<Card> first;
     int second;
-    int depth;
+    int balance;
 
     Node* left;
     Node* right;
-    Node* parent;
 
     Node() {
         left = nullptr;
         right = nullptr;
-        parent = nullptr;
     };
 
-    Node(std::vector<Card> first, int _second) {
-        _first = first;
-        second = _second;
+    Node(std::vector<Card> key, int value) {
+        first = key;
+        second = value;
 
         left = nullptr;
         right = nullptr;
-        parent = nullptr;
     };
 };
 
 class hand_map {
 
-private:
-    // Balance the tree
-    void balance(Node* node);
-
-    //iterate through keys
-    Node* iterator(std::vector<Card>& first);
-
-    const Node* iterator(std::vector<Card>& first) const;
-
-    void leftRot(Node* a);
-
-    void rightRot(Node* x);
-
-    // Rotate through tree
-    void rotator(Node* node);
-
-    // Function to insert a value in map
-    Node* insertMap(Node *root, std::vector<Card> first, int second);
-
-    // depth at node
-    int depthofTree(Node* node);
-
-    // Inititialize map variables
-    Node* create(std::vector<Card> first, int second);
-
-    const int search(std::vector<Card> _first) const
-    {
-        const Node* temp = iterator(_first);
-        if (temp != nullptr) {
-            return temp->second;
-        }
-        return 0;
-    }
-
 public:
     //static class map* root;
     Node* root;
-    int count{};
+    int nodeCount;
     int depth{};
-    
+    int index = 0;
     hand_map();
+    int getHeight(Node* root);
+    Node* intial() { return root; };
+    void setInitial(Node* root) {
+        this->root = root;
+    };
+
+    std::vector<Node*> nodes;
+
+    void insert(Hand hand);
+
+    int getnodeCount();
+
+    Node* insertMap(Node* root, std::vector<Card> first, int value, std::vector<Node*>& nodes);
+    void findQuality(int second, std::vector<Hand>& qualtoHan2, std::vector<Node*>& nodes);
+    int findHand(Node* root, std::vector<Card> first, std::vector<Node*>& nodes);
+
+    int balanceFactor(Node* root);
+
+    Node* rotateRight(Node* node);
+
+    //Rotates node left
+    Node* rotateLeft(Node* node);
+
+    //Rotates node left right
+    Node* rotateLeftRight(Node* node);
+
+    //Rotates node right left
+    Node* rotateRightLeft(Node* node);
+
+    void preOrder(Node* root, std::vector<Node*>& nodes);
+
     
-    //Node* parent;
-
-
-
-    //int operator[](std::vector<Card> key) {
-    //    return insertMap(key)->second;
-    //}
-
-    const int operator[](std::vector<Card> key) const
-    {
-        // Search method is also qualified with const
-        return search(key);
-    }
     //store hands together by quality
     std::vector<std::vector<Hand>> qualtoHand;
-
-    // CHange value of key
-    /*void changeKey(vector<Hand> first, int second)
-    {
-        map* temp = iterator(first);
-        if (temp != nullptr) {
-            temp->second = second;
-        }
-    }*/
-
+    
     // Iterate through tree in order
     /*void iterforQual(map* head, int quality)
     {
@@ -118,11 +90,8 @@ public:
     int size(void);
 
     // Insert key and value
-    void insert(Hand hand);
     const int find(const Hand& hand);
 
     std::vector<Hand> find(const int quality);
 };
 
-//map* map::root = nullptr;
-//int map::size = 0;#pragma once
