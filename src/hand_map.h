@@ -49,6 +49,8 @@ public:
 
     int getnodeCount();
 
+    int recHand(int sum, Node* root);
+
     Node* insertMap(Node* root, std::vector<Card> first, int value, std::vector<Node*>* nodes);
     void findQuality(int second, std::vector<Hand>& qualtoHan2, std::vector<Node*> *nodess);
     int findHand(Node* root, std::vector<Card> first, std::vector<Node*>* nodes);
