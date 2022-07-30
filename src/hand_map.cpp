@@ -178,34 +178,41 @@
 		}*/
 	}
 
+	int hand_map::recHand(int sum, Node* root) {
+		if (root == nullptr) {
+			return -1;
+		}
+		if (sum == root->third){
+			return root->second;
+		}
+		if (root->third > sum) {
+			recHand(sum, root->right);
+		}
+		if (root->third < sum) {
+			recHand(sum, root->left);
+		}
+	}
+
 
 	//Searches for name matching node, prints multiple IDs with multiple matching names
 	int hand_map::findHand(Node* root, std::vector<Card> first, std::vector<Node*> *nodes) {
-		int n = 0;
 
 		//std::vector<Node*> nodes;
 
 		//preOrder(root, nodes);
 
-		int sum1 = 0;
+		int sum = 0;
 		int sum2 = 0;
 		//std::cout << nodes->size() << std::endl;
 		for (int i = 0; i < 5; i++)
-			sum1 = sum1 + first.at(i).rank + (first.at(i).suit * 13);
+			sum = sum + first.at(i).rank + (first.at(i).suit * 13);
 
-		while (n < nodes->size()) {
-			sum2 = 0;
-			//Hand hand2 = Hand(nodes[n]->first, nodes[n]->second);
-			for (int i = 0; i < 5; i++)
-				sum2 = sum2 + nodes->at(n)->first.at(i).rank + nodes->at(n)->first.at(i).suit * 13;
-			if (sum2 == sum1) {
-					//nameSame.push_back(nodes[n]);
-
-				return nodes->at(n)->second;
-				}
-			n++;
-		}
-		return -1;
+		int qual = recHand(sum, root);
+		//recursive function
+		//
+		
+		
+		return qual;
 	}
 
 	void hand_map::insert(Hand hand)
