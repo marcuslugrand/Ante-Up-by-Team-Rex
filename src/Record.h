@@ -2,13 +2,13 @@
 #include <string>
 using namespace std;
 struct Record {
-	int runTime;
+	long long runTime;
 	string option;
 	string dataStruct;
-	Record(int option, string dataStruct, int runTime);
+	Record(string option, string dataStruct, int runTime);
 };
 
-Record::Record(int option, string dataStruct, int runTime) {
+Record::Record(string option, string dataStruct, int runTime) {
 	this->option = option;
 	this->dataStruct = dataStruct;
 	this->runTime = runTime;
