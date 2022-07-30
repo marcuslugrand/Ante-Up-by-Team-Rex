@@ -1,244 +1,100 @@
-#include "hand_map.h"
-#include <iterator>
-#include <string>
-#include <functional>
 #include <vector>
 #include <iostream>
+#include "hand.h"
 
+class Node {
+public:
+    std::vector<Card> first;
+    int second;
+    int third;
+    int balance;
 
-	hand_map::hand_map() {
-		nodes =  new std::vector<Node*>;
-		root = nullptr;
-		nodeCount = 0;
-	};
+    Node* left;
+    Node* right;
 
-	//Get the count of nodes
-	int hand_map::getnodeCount() {
-		return nodeCount;
-	};
+    Node() {
+        left = nullptr;
+        right = nullptr;
+    };
 
-	//Finds the height of the tree
-	int hand_map::getHeight(Node* root) {
-		if (root == nullptr) {
-			return 0;
-		}
-		int left = getHeight(root->left);
-		int right = getHeight(root->right);
-		return 1 + std::max(left, right);
-	}
+    Node(std::vector<Card> key, int value, int sum) {
+        first = key;
+        second = value;
+        third = sum;
 
-	//Is the balance factor
-	int hand_map::balanceFactor(Node* root) {
-		if (root == nullptr) {
-			return 0;
-		}
-		else {
-			int totalHeight = getHeight(root->left) - getHeight(root->right);
-			return totalHeight;
-		}
-	}
+        left = nullptr;
+        right = nullptr;
+    };
+};
 
-	//Rotates node right
-	Node* hand_map::rotateRight(Node* node) {
-		Node* grandChild = node->left->right;
-		Node* newParent = node->left;
-		newParent->right = node;
-		node->left = grandChild;
-		return newParent;
-	}
+class hand_map {
 
-	//Rotates node left
-	Node* hand_map::rotateLeft(Node* node) {
-		Node* grandChild = node->right->left;
-		Node* newParent = node->right;
-		newParent->left = node;
-		node->right = grandChild;
-		return newParent;
-	}
+public:
+    //static class map* root;
+    Node* root;
+    int nodeCount;
+    int depth{};
+    int index = 0;
+    hand_map();
+    int getHeight(Node* root);
+    Node* intial() { return root; };
+    void setInitial(Node* root) {
+        this->root = root;
+    };
 
-	//Rotates node left right
-	Node* hand_map::rotateLeftRight(Node* node) {
-		Node* greatGrandChild = node->left->right->left;
-		Node* newChild = node->left->right;
-		Node* grandChild = node->left;
-		node->left = newChild;
-		newChild->left = grandChild;
-		grandChild->right = greatGrandChild;
-		Node* newParent = rotateRight(node);
-		return newParent;
-	}
+    std::vector<Node*> *nodes;
+    //std::vector<Node> nodes = new std::vector<Node>;
 
-	//Rotates node right left
-	Node* hand_map::rotateRightLeft(Node* node) {
-		Node* greatGrandChild = node->right->left->right;
-		Node* newChild = node->right->left;
-		Node* grandChild = node->right;
-		node->right = newChild;
-		newChild->right = grandChild;
-		grandChild->left = greatGrandChild;
-		Node* newParent = rotateLeft(node);
-		return newParent;
-	}
+    void insert(Hand hand);
 
-	//Inserts name and ID into node and self balances
-	Node* hand_map::insertMap(Node* root, std::vector<Card> key, int value, std::vector<Node*> *nodes) {
-		int sum1 = 0;
-		int sum2 = 0;
+    int getnodeCount();
 
-		//std::cout << value << std::endl;
+    Node* insertMap(Node* root, std::vector<Card> first, int value, std::vector<Node*>* nodes);
+    void findQuality(int second, std::vector<Hand>& qualtoHan2, std::vector<Node*> *nodess);
+    int findHand(Node* root, std::vector<Card> first, std::vector<Node*>* nodes);
 
-		for (int i = 0; i < 5; i++)
-			sum1 = sum1 + key.at(i).rank + (key.at(i).suit * 13);
-		if (root != nullptr)
-			for (int i = 0; i < 5; i++)
-				sum2 = sum2 + root->first.at(i).rank + root->first.at(i).suit * 13;
-		else {
-			sum2 = 0;
-		}
-		if (root == nullptr) {
-			Node* node = new Node(key, value, sum1);
-			nodeCount++;
-			return node;
-		}
-		else if (sum2 > sum1) {
-			root->left = insertMap(root->left, key, value, nodes);
-		}
-		else if (sum2 < sum1) {
-			root->right = insertMap(root->right, key, value, nodes);
-		}
-		else {
-			return root;
-		}
-		
-		root->balance = balanceFactor(root);
-		
-		int sum3 = 0;
-		int	sum4 = 0;
-		if (root->left != nullptr){
-			for (int i = 0; i < 5; i++) {
-				sum3 = sum3 + root->left->first.at(i).rank + root->left->first.at(i).suit * 13;
-			}
-		}
-		else {
-			sum3 = 0;
-		}
-		if (root->right != nullptr)
-			for (int i = 0; i < 5; i++)
-				sum4 = sum4 + root->right->first.at(i).rank + root->right->first.at(i).suit * 13;
-		else
-			sum4 = 0;
-		
-		if (root->balance > 1 && sum1 < sum3) {
-			return rotateRight(root);
-		}
-		else if (root->balance < -1 && sum1 > sum4) {
-			return rotateLeft(root);
-		}
-		else if (root->balance > 1 && sum1 > sum3) {
-			return rotateLeftRight(root);
-		}
-		else if (root->balance < -1 && sum1 < sum4) {
-			return rotateRightLeft(root);
-		}
-		//root = this->root;
-		//preOrder(root, nodes);
-		//std::cout << nodes.size() << std::endl;
-		return root;
-	}
+    int balanceFactor(Node* root);
 
-	//Pushes nodes in vector preordered
-	void hand_map::preOrder(Node* root, int second, std::vector<Hand> &qualtoHan2) {
-		if (root == nullptr) {
-			//std::cout << root->second << std::endl;
-			return;
-		}
-		//nodes->push_back(root);
-		//std::cout << root->second << std::endl;
-		//std::cout << nodes->size() << std::endl;
-		if (second == root->second) {
-			Hand hand2 = Hand(root->first, root->second);
-			qualtoHan2.push_back(hand2);
-		}
-		preOrder(root->left, second, qualtoHan2);
-		preOrder(root->right, second, qualtoHan2);
-	}
+    Node* rotateRight(Node* node);
 
-	
+    //Rotates node left
+    Node* rotateLeft(Node* node);
 
-	//Searches for ID, prints name from ID
-	void hand_map::findQuality(int second, std::vector<Hand>& qualtoHan2, std::vector<Node*> *nodes) {
-		int n = 0;
-		this->preOrder(root, second, qualtoHan2);
-		//std::cout << nodes->size() << std::endl;
-		/*while (n < nodes->size()) {
-			Hand hand2 = Hand(nodes->at(n)->first, nodes->at(n)->second);
-			qualtoHan2.push_back(hand2);
-			n++;
-			//std::cout << nodes->at(n)->second << std::endl;
-		}*/
-	}
+    //Rotates node left right
+    Node* rotateLeftRight(Node* node);
 
+    //Rotates node right left
+    Node* rotateRightLeft(Node* node);
 
-	//Searches for name matching node, prints multiple IDs with multiple matching names
-	int hand_map::findHand(Node* root, std::vector<Card> first, std::vector<Node*> *nodes) {
-		int n = 0;
+    void preOrder(Node* root, int second ,std::vector<Hand> &qualtoHand);
 
-		//std::vector<Node*> nodes;
+    
+    //store hands together by quality
+    std::vector<std::vector<Hand>> qualtoHand;
+    
+    // Iterate through tree in order
+    /*void iterforQual(map* head, int quality)
+    {
+        if (root == nullptr) {
+        return;
+        }
+        if (head->second == quality) {
+            qualtoHand.push_back(first);
+        }
+        if (head->left != nullptr) {
+            iterforQual(head->left);
+        }
+        if (head->right != nullptr) {
+            iterforQual(head->right);
+        }
+    }*/
 
-		//preOrder(root, nodes);
+    // Returns number of elements in the map
+    int size(void);
 
-		int sum1 = 0;
-		int sum2 = 0;
-		//std::cout << nodes->size() << std::endl;
-		for (int i = 0; i < 5; i++)
-			sum1 = sum1 + first.at(i).rank + (first.at(i).suit * 13);
+    // Insert key and value
+    const int find(const Hand& hand);
 
-		while (n < nodes->size()) {
-			sum2 = 0;
-			//Hand hand2 = Hand(nodes[n]->first, nodes[n]->second);
-			for (int i = 0; i < 5; i++)
-				sum2 = sum2 + nodes->at(n)->first.at(i).rank + nodes->at(n)->first.at(i).suit * 13;
-			if (sum2 == sum1) {
-					//nameSame.push_back(nodes[n]);
+    std::vector<Hand> find(const int quality);
+};
 
-				return nodes->at(n)->second;
-				}
-			n++;
-		}
-		return -1;
-	}
-
-	void hand_map::insert(Hand hand)
-	{
-		Node* newRoot = insertMap(intial(), hand.cards, hand.qualty, nodes);
-		setInitial(newRoot);
-		
-	}
-
-	const int hand_map::find(const Hand & hand) {
-		//preOrder(root, nodes);
-		int qual = findHand(this->root, hand.cards, nodes);
-		std::cout << qual << std::endl;
-		return qual;
-		/*int n = 0;
-
-		std::vector<Node*> nodes;
-		std::vector<Node*> nameSame;
-
-		preOrder(root, nodes);
-
-		while (n < nodes.size()) {
-			if (nodes[n]->first == hand.cards) {
-				nameSame.push_back(nodes[n]);
-				return nodes[n]->second;
-			}
-			n++;
-		}*/
-	}
-
-
-	std::vector<Hand> hand_map::find(const int qualty) {
-		std::vector<Hand> qualtoHan2;
-		this->preOrder(root, qualty, qualtoHan2);
-		return qualtoHan2;
-	}
