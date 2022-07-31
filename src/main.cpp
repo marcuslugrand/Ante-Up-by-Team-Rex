@@ -14,7 +14,7 @@
 
 using namespace std;
 
-void importFile(string file, unordered_hand_map hashMap, hand_map treeMap) { //Inserts the data into the HashMap and the TreeMap
+void importFile(string file, unordered_hand_map* hashMap, hand_map* treeMap) { //Inserts the data into the HashMap and the TreeMap
     ifstream data(file);
     if (data.is_open()) {
         while (!data.eof()) {
@@ -35,8 +35,8 @@ void importFile(string file, unordered_hand_map hashMap, hand_map treeMap) { //I
            // cout << quality << endl;
 
             Hand hand = Hand(cards, stoi(quality));
-            hashMap.insert(hand);
-            treeMap.insert(hand);
+            hashMap->insert(hand);
+            treeMap->insert(hand);
         }
     }
 }
@@ -59,8 +59,8 @@ struct hash_pair {
 };
 
 int main() { 
-    unordered_hand_map hashMap;
-    hand_map treeMap;
+    unordered_hand_map* hashMap = new unordered_hand_map;
+    hand_map* treeMap = new hand_map;
 
     //import data
     importFile("test1.data", hashMap, treeMap);
@@ -256,7 +256,7 @@ int main() {
                                  //timer start
                                  auto start = std::chrono::high_resolution_clock::now();
 
-                                 /*int quality = */hashMap.find(temp); //Hash Map find
+                                 /*int quality = */hashMap->find(temp); //Hash Map find
                                 
                                  //timer end
                                  auto stop = std::chrono::high_resolution_clock::now();
@@ -271,7 +271,7 @@ int main() {
                                  //timer start
                                  start = std::chrono::high_resolution_clock::now();
 
-                                 int quality = treeMap.find(temp); //Hash Map find
+                                 int quality = treeMap->find(temp); //Hash Map find
 
                                  //timer end
                                  stop = std::chrono::high_resolution_clock::now();
@@ -332,7 +332,7 @@ int main() {
                                 //timer start
                                 auto start = std::chrono::high_resolution_clock::now();
 
-                                /*vector<Hand> hands = */hashMap.find((int)(qualityInput - '0')); //Hash Map find
+                                /*vector<Hand> hands = */hashMap->find((int)(qualityInput - '0')); //Hash Map find
 
                                 //timer end
                                 auto stop = std::chrono::high_resolution_clock::now();
@@ -347,7 +347,7 @@ int main() {
                                 //timer start
                                 start = std::chrono::high_resolution_clock::now();
 
-                                vector<Hand> hands = treeMap.find((int)(qualityInput - '0')); //Hash Map find
+                                vector<Hand> hands = treeMap->find((int)(qualityInput - '0')); //Hash Map find
 
                                 //timer end
                                 stop = std::chrono::high_resolution_clock::now();
@@ -355,8 +355,8 @@ int main() {
                                 duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
                                 
                                 //Update History Table
-                                record = Record("Option 2", "Tree Map", duration.count());
-                                history.push(record);
+                                Record record2 = Record("Option 2", "Tree Map", duration.count());
+                                history.push(record2);
 
                                 //Display Found Hands
                                 for (int h = 0; h < hands.size(); h++) {
