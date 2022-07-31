@@ -173,7 +173,7 @@ const int unordered_hand_map::find(const Hand& hand)
         Hand hand2(handToQual.at(index).first, handToQual.at(index).second);
         if(hand.handCompare(hand2))
         {
-            return hand.qualty;
+            return hand2.qualty;
         }
         else
         {
