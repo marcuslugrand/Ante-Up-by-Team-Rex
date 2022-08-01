@@ -9,13 +9,13 @@ class Node {
 public:
     std::vector<Card> first;
     int second;
-    int third;
+    size_t third;
     int balance;
 
     Node* left;
     Node* right;
 
-    Node(std::vector<Card> key, int value, int sum) {
+    Node(std::vector<Card> key, int value, size_t sum) {
         first = key;
         second = value;
         third = sum;
@@ -37,6 +37,8 @@ public:
     int searchCount;
     int depth{};
     size_t sumR;
+    int recursion;
+    
     
     hand_map();
 
@@ -47,7 +49,7 @@ public:
     int getnodeCount();
     //int getHeight(Node* node);
 
-    int recHand(size_t sum, Node* root);
+    int recHand(size_t sum, Node* root, int &recursion);
     void searchAllHands(Node* root, int second ,std::vector<Hand> &qualtoHand);
     
     Node* insertMap(Node* root, std::vector<Card> first, size_t value);
