@@ -66,4 +66,3 @@ public:
     const int find(const Hand& hand);
     std::vector<Hand> find(const int quality);
 };
-
