@@ -69,3 +69,4 @@ public:
     std::vector<Hand> find(const int quality);
 };
 
+
