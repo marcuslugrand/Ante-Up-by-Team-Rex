@@ -189,19 +189,6 @@ int hand_map::recHand(size_t sum, Node* root, int &recursion) {
 	}
 }
 
-
-//Searches for name matching node, prints multiple IDs with multiple matching names
-size_t hand_map::findHand(Node* root, std::vector<Card> first) {
-	size_t sum = 0;
-
-	for (int i = 0; i < 5; i++)
-		sum = sum + (first.at(i).rank + (first.at(i).suit - 1) * 13) * pow(53, 5 - i);
-	
-	recHand(sum, root, recursion);
-	int qual = recursion;
-	return qual;
-}
-
 //Inserts each hand from main
 void hand_map::insert(Hand hand)
 {
@@ -225,7 +212,7 @@ void hand_map::insert(Hand hand)
 		
 		insertCount++;
 	}
-	//std::cout << nodeCount << std::endl;
+	std::cout << nodeCount << std::endl;
 }
 
 //Finds quality integer from given hand
