@@ -63,13 +63,13 @@ int main() {
     hand_map* treeMap = new hand_map;
 
     //import data
-    importFile("test1.data", hashMap, treeMap);
+    importFile("Data/test1.data", hashMap, treeMap);
     
     sf::RenderWindow window(sf::VideoMode(1800, 800), "Ante Up");
     
     //Load Font
     sf::Font font;
-    if (!font.loadFromFile("arial.ttf"))
+    if (!font.loadFromFile("img/arial.ttf"))
     {
         cout << "error!" << endl;
     }
@@ -117,7 +117,7 @@ int main() {
 
     //Cards
     sf::Texture allCards;
-    allCards.loadFromFile("cards.png");
+    allCards.loadFromFile("img/cards.png");
     unordered_map<pair<int, int>, sf::Sprite,hash_pair> cardImages;
     
     //Match card Img with Card suit/rank
