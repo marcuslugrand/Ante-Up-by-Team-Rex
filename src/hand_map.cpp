@@ -86,7 +86,7 @@ Node* hand_map::rotateRightLeft(Node* node) {
 	return newParent;
 }
 
-Node* hand_map::rebalance(Node* root, int& sumR) {
+Node* hand_map::rebalance(Node* root, size_t& sumR) {
 	if (root == nullptr) {
 		return root;
 	}
@@ -127,7 +127,7 @@ Node* hand_map::rebalance(Node* root, int& sumR) {
 }
 
 //Inserts given hand and self balances
-Node* hand_map::insertMap(Node* temp, std::vector<Card> key, int value) {
+Node* hand_map::insertMap(Node* temp, std::vector<Card> key, size_t value) {
 	size_t sum1 = 0;
 	size_t sum2 = 0;
 
@@ -172,7 +172,7 @@ void hand_map::searchAllHands(Node* root, int second, std::vector<Hand>& qualtoH
 }
 
 //Recursively searches through nodes to find matching hand
-size_t hand_map::recHand(size_t sum, Node* root) {
+int hand_map::recHand(size_t sum, Node* root) {
 	searchCount++;
 	if (root == nullptr) {
 		return -1;
