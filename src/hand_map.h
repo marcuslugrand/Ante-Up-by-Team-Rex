@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <cmath>
 #include "hand.h"
 
 //Node class for tree
@@ -14,14 +15,6 @@ public:
     Node* left;
     Node* right;
 
-    Node() {
-        int second = 0;
-        int third = 0;
-        int balance = 0;
-        left = nullptr;
-        right = nullptr;
-    };
-
     Node(std::vector<Card> key, int value, int sum) {
         first = key;
         second = value;
@@ -34,12 +27,16 @@ public:
 
 //Map class for main
 class hand_map {
+private:
+    
+
 public:
     Node* root;
     int nodeCount;
+    int insertCount;
+    int searchCount;
     int depth{};
-
-    std::vector<Node*> *nodes;
+    int sumR;
     
     hand_map();
 
@@ -48,6 +45,7 @@ public:
     void setInitial(Node* root);
 
     int getnodeCount();
+    //int getHeight(Node* node);
 
     int recHand(int sum, Node* root);
     void searchAllHands(Node* root, int second ,std::vector<Hand> &qualtoHand);
@@ -57,6 +55,7 @@ public:
     int findHand(Node* root, std::vector<Card> first);
 
     int balanceFactor(Node* root);
+    Node* rebalance(Node* node, int& sumR);
 
     Node* rotateRight(Node* node);
     Node* rotateLeft(Node* node);
