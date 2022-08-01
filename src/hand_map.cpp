@@ -92,11 +92,11 @@ Node* hand_map::rebalance(Node* root, int& sumR) {
 	}
 	root->balance = balanceFactor(root);
 
-	int sum3 = 0;
-	int	sum4 = 0;
+	size_t sum3 = 0;
+	size_t	sum4 = 0;
 	if (root->left != nullptr) {
 		for (int i = 0; i < 5; i++) {
-			sum3 = sum3 + (root->left->first.at(i).rank + (root->left->first.at(i).suit - 1) * 14) * pow(53, 5 - i);
+			sum3 = sum3 + (root->left->first.at(i).rank + (root->left->first.at(i).suit - 1) * 13) * pow(53, 5 - i);
 		}
 	}
 	else {
@@ -104,7 +104,7 @@ Node* hand_map::rebalance(Node* root, int& sumR) {
 	}
 	if (root->right != nullptr) {
 		for (int i = 0; i < 5; i++) {
-			sum4 = sum4 + (root->right->first.at(i).rank + (root->right->first.at(i).suit - 1) * 14) * pow(53, 5 - i);
+			sum4 = sum4 + (root->right->first.at(i).rank + (root->right->first.at(i).suit - 1) * 13) * pow(53, 5 - i);
 		}
 	}
 	else {
@@ -123,20 +123,19 @@ Node* hand_map::rebalance(Node* root, int& sumR) {
 	else if (root->balance < -1 && sumR < sum4) {
 		return rotateRightLeft(root);
 	}
-	//setInitial(root);
 	return root;
 }
 
 //Inserts given hand and self balances
 Node* hand_map::insertMap(Node* temp, std::vector<Card> key, int value) {
-	int sum1 = 0;
-	int sum2 = 0;
+	size_t sum1 = 0;
+	size_t sum2 = 0;
 
 	for (int i = 0; i < 5; i++)
-		sum1 = sum1 + (key.at(i).rank + (key.at(i).suit - 1) * 14) * pow(53, 5 - i);
+		sum1 = sum1 + (key.at(i).rank + (key.at(i).suit - 1) * 13) * pow(53, 5 - i);
 	if (temp != nullptr)
 		for (int i = 0; i < 5; i++)
-			sum2 = sum2 + (temp->first.at(i).rank + (temp->first.at(i).suit - 1) * 14) * pow(53, 5 - i);
+			sum2 = sum2 + (temp->first.at(i).rank + (temp->first.at(i).suit - 1) * 13) * pow(53, 5 - i);
 	else {
 		sum2 = 0; 
 	}
@@ -155,9 +154,7 @@ Node* hand_map::insertMap(Node* temp, std::vector<Card> key, int value) {
 	else if (sum1 > sum2) {
 		temp->right = insertMap(temp->right, key, value);
 	}
-	//rebalance(root, sum1);
 	return temp;
-	//
 }
 
 //Searches through all hands of matching qualities and stores in vector
@@ -175,7 +172,7 @@ void hand_map::searchAllHands(Node* root, int second, std::vector<Hand>& qualtoH
 }
 
 //Recursively searches through nodes to find matching hand
-int hand_map::recHand(int sum, Node* root) {
+size_t hand_map::recHand(size_t sum, Node* root) {
 	searchCount++;
 	if (root == nullptr) {
 		return -1;
@@ -193,11 +190,11 @@ int hand_map::recHand(int sum, Node* root) {
 
 
 //Searches for name matching node, prints multiple IDs with multiple matching names
-int hand_map::findHand(Node* root, std::vector<Card> first) {
-	int sum = 0;
+size_t hand_map::findHand(Node* root, std::vector<Card> first) {
+	size_t sum = 0;
 
 	for (int i = 0; i < 5; i++)
-		sum = sum + (first.at(i).rank + (first.at(i).suit - 1) * 14) * pow(53, 5 - i);
+		sum = sum + (first.at(i).rank + (first.at(i).suit - 1) * 13) * pow(53, 5 - i);
 
 	int qual = recHand(sum, root);
 
@@ -207,14 +204,13 @@ int hand_map::findHand(Node* root, std::vector<Card> first) {
 //Inserts each hand from main
 void hand_map::insert(Hand hand)
 {
-	int sumi = 0;
+	size_t sumi = 0;
 	for (int i = 0; i < 5; i++) {
-		sumi = sumi + (hand.cards.at(i).rank + (hand.cards.at(i).suit-1) * 14) * pow(53, 5 - i);
+		sumi = sumi + (hand.cards.at(i).rank + (hand.cards.at(i).suit-1) * 13) * pow(53, 5 - i);
 	}
 	if (root == nullptr) {
 		nodeCount++;
 		insertCount++;
-		int sumi = 0;
 		
 		root = new Node(hand.cards, hand.qualty, sumi);
 	}
@@ -227,7 +223,7 @@ void hand_map::insert(Hand hand)
 		
 		insertCount++;
 	}
-	std::cout << nodeCount << std::endl;
+	//std::cout << nodeCount << std::endl;
 }
 
 //Finds quality integer from given hand
