@@ -248,7 +248,7 @@ int main() {
                                  vector<Card> hand;
                                  for (int i = 0; i < selectedCardsSet.size(); i++) {
                                      hand.push_back(Card(selectedCardsQueue.front().first, selectedCardsQueue.front().second));
-                                     cout << selectedCardsQueue.front().first << "|" << selectedCardsQueue.front().second << endl;
+                                     //cout << selectedCardsQueue.front().first << "|" << selectedCardsQueue.front().second << endl;
                                      selectedCardsQueue.pop();
                                  }
                                  selectedCardsSet.clear();

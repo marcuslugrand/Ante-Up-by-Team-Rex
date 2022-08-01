@@ -212,7 +212,7 @@ void hand_map::insert(Hand hand)
 		
 		insertCount++;
 	}
-	std::cout << nodeCount << std::endl;
+	//std::cout << nodeCount << std::endl;
 }
 
 //Finds quality integer from given hand
