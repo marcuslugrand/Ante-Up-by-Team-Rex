@@ -320,6 +320,7 @@ int main() {
                                      result.setString("The Selected hand is not in our dataset. :(");
                                      break;
                                  }
+                                     
                                  
                              }
                              else { //If selection is < 5 cards
@@ -446,8 +447,12 @@ int main() {
         }
        
         //Display History Table Information
+        while (history.size() > 23) {
+            history.pop();
+        }
         queue<Record> temp(history);
-        for (int i = 0; i < temp.size(); i++) {
+        int i = 0;
+        while (!temp.empty()) {
             dataStruct.setString(temp.front().dataStruct);
             optionType.setString(temp.front().option);
             runTime.setString(to_string(temp.front().runTime));
@@ -460,6 +465,7 @@ int main() {
             window.draw(optionType);
             window.draw(runTime);
             temp.pop();
+            i++;
         }
 
         //Display result of Run
