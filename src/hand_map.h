@@ -47,12 +47,12 @@ public:
     int getnodeCount();
     //int getHeight(Node* node);
 
-    int recHand(int sum, Node* root);
+    size_t recHand(size_t sum, Node* root);
     void searchAllHands(Node* root, int second ,std::vector<Hand> &qualtoHand);
     
     Node* insertMap(Node* root, std::vector<Card> first, int value);
     void findQuality(int second, std::vector<Hand>& qualtoHan2);
-    int findHand(Node* root, std::vector<Card> first);
+    size_t findHand(Node* root, std::vector<Card> first);
 
     int balanceFactor(Node* root);
     Node* rebalance(Node* node, int& sumR);
@@ -66,3 +66,4 @@ public:
     const int find(const Hand& hand);
     std::vector<Hand> find(const int quality);
 };
+
