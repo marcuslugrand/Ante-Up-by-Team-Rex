@@ -183,7 +183,7 @@ int main() {
 
     //Option1 Result
     sf::Text result("", font);
-    result.setPosition(1000, 600);
+    result.setCharacterSize(25);
 
     //History Table
     queue<Record> history;
@@ -192,6 +192,8 @@ int main() {
     sf::Text runTime("", font);
     sf::Text optionType("", font);
    
+   //Option 2 Results
+    vector<Hand> hands;
     while (window.isOpen()){
         
         window.clear();
@@ -256,7 +258,7 @@ int main() {
                                  //timer start
                                  auto start = std::chrono::high_resolution_clock::now();
 
-                                 /*int quality = */hashMap->find(temp); //Hash Map find
+                                 int quality = hashMap->find(temp); //Hash Map find
                                 
                                  //timer end
                                  auto stop = std::chrono::high_resolution_clock::now();
@@ -271,7 +273,7 @@ int main() {
                                  //timer start
                                  start = std::chrono::high_resolution_clock::now();
 
-                                 int quality = treeMap->find(temp); //Hash Map find
+                                 /*int quality = */treeMap->find(temp); //Tree Map find
 
                                  //timer end
                                  stop = std::chrono::high_resolution_clock::now();
@@ -279,7 +281,7 @@ int main() {
                                  duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
                                  
                                  //Update History Table
-                                 record = Record("Option 2", "Tree Map", duration.count());
+                                 record = Record("Option 1", "Tree Map", duration.count());
                                  history.push(record);
                                  
                                  //Output Result
@@ -332,7 +334,7 @@ int main() {
                                 //timer start
                                 auto start = std::chrono::high_resolution_clock::now();
 
-                                /*vector<Hand> hands = */hashMap->find((int)(qualityInput - '0')); //Hash Map find
+                                hands = hashMap->find((int)(qualityInput - '0')); //Hash Map find
 
                                 //timer end
                                 auto stop = std::chrono::high_resolution_clock::now();
@@ -347,7 +349,7 @@ int main() {
                                 //timer start
                                 start = std::chrono::high_resolution_clock::now();
 
-                                vector<Hand> hands = treeMap->find((int)(qualityInput - '0')); //Hash Map find
+                                /*vector<Hand> hands =*/ treeMap->find((int)(qualityInput - '0')); //Tree Map find
 
                                 //timer end
                                 stop = std::chrono::high_resolution_clock::now();
@@ -357,14 +359,6 @@ int main() {
                                 //Update History Table
                                 Record record2 = Record("Option 2", "Tree Map", duration.count());
                                 history.push(record2);
-
-                                //Display Found Hands
-                                for (int h = 0; h < hands.size(); h++) {
-                                    for (int c = 0; c < hands[h].cards.size(); c++) {
-                                        cardImages[make_pair(hands[h].cards[c].suit, hands[h].cards[c].rank)].setPosition(820 + 75 * c + 6 * 75 * (h % 2), 100 * (h+1) % 2);
-                                        window.draw(cardImages[make_pair(hands[h].cards[c].suit, hands[h].cards[c].rank)]);
-                                    }
-                                }
 
                             }
                             else { //If apha is entered instead of digit
@@ -436,6 +430,19 @@ int main() {
         else { //Option 2 Only
             window.draw(textbox);
             window.draw(qualityText);
+
+            //Display Found Hands
+            int numHandsDisplay = 14 < hands.size() ? 14 : hands.size();
+            for (int h = 0; h < numHandsDisplay; h++) {
+                for (int c = 0; c < hands[h].cards.size(); c++) {
+                    int posx = 820 + 75 * c + ((6 * 75 + 50) * (h % 2));
+                    int posy = 50 * (h - h % 2);
+                    cardImages[make_pair(hands[h].cards[c].suit, hands[h].cards[c].rank)].setPosition(posx, posy);
+                    window.draw(cardImages[make_pair(hands[h].cards[c].suit, hands[h].cards[c].rank)]);
+                }
+            }
+            int handsNotShown = hands.size() < 14 ? 0 : hands.size() - 14;
+            result.setString("(" + to_string(handsNotShown) + " more hands are not shown)");
         }
        
         //Display History Table Information
@@ -447,14 +454,17 @@ int main() {
 
             dataStruct.setPosition(530,110 + 30*i);
             optionType.setPosition(390,110 + 30*i);
-            runTime.setPosition(715, 110 + 30*i);
+            runTime.setPosition(720 -(runTime.getString().getSize() * 13) / 2, 110 + 30*i);
 
             window.draw(dataStruct);
             window.draw(optionType);
             window.draw(runTime);
+            temp.pop();
         }
 
         //Display result of Run
+        
+        result.setPosition(800+500 - (result.getString().getSize()*13)/2, 750);
         window.draw(result);
 
         window.display();
